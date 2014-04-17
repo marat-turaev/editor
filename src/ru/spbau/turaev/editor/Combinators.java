@@ -2,6 +2,7 @@ package ru.spbau.turaev.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class Combinators {
@@ -38,6 +39,10 @@ public class Combinators {
         });
     }
 
+    static Parser<Character> character(char c) {
+        return sat(p -> p == c);
+    }
+
     static Parser<Character> letter() {
         return sat(Character::isLetter);
     }
@@ -55,6 +60,10 @@ public class Combinators {
     }
 
     static Parser<Integer> integer() {
+        return character('-').bindM(t1 -> natural().bindM(t2 -> Parser.returnM(-t2))).plus(natural());
+    }
+
+    static Parser<Integer> natural() {
         return digit().many1().bindM(digits -> {
             char a[] = new char[digits.size()];
             int i = 0;

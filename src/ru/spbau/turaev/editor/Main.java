@@ -34,6 +34,8 @@ abstract class Parser<T> {
         };
     }
 
+    //TODO: Implement (<<) bind
+
     Parser<T> plus(Parser<T> other) {
         return new Parser<T>() {
             @Override
@@ -45,14 +47,13 @@ abstract class Parser<T> {
         };
     }
 
-    Parser<Collection<T>> many() {
-        return this.bindM(t -> this.many().<Collection<T>>bindM(t1 -> returnM(CollectionExtentions.concat(t, t1)))).plus(returnM(new ArrayList<>()));
-    }
-
     Parser<Collection<T>> many1() {
-        return this.bindM(t -> this.many().<Collection<T>>bindM(t1 -> returnM(CollectionExtentions.concat(t, t1))));
+        return this.bindM(t -> many().<Collection<T>>bindM(t1 -> returnM(CollectionExtentions.concat(t, t1))));
     }
 
+    Parser<Collection<T>> many() {
+        return many1().plus(returnM(new ArrayList<>()));
+    }
 }
 
 public class Main {
@@ -60,8 +61,8 @@ public class Main {
         String test1 = "Hello123asd4asd1, asdasd, 123 + 14";
 
         CollectionExtentions.PrintCollection(Combinators.word().parse(test1));
-        CollectionExtentions.PrintCollection(Combinators.digit().many().parse("42"));
         CollectionExtentions.PrintCollection(Combinators.integer().parse("42 hello"));
+        CollectionExtentions.PrintCollection(Combinators.integer().parse("-42 hello"));
         CollectionExtentions.PrintCollection(Combinators.identifier().parse(test1));
     }
 }
