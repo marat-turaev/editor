@@ -16,7 +16,7 @@ class Pair<A, B> {
 
     @Override
     public String toString() {
-        return String.format("(%s, %s)", first.toString(), second.toString());
+        return String.format("(%s;%s)", first.toString(), second.toString());
     }
 }
 
@@ -75,25 +75,16 @@ abstract class Parser<T> {
         }).plus(returnM(new ArrayList<>()));
     }
 
-    static Parser<Character> zero() {
-        return new Parser<Character>() {
+    static <T> Parser<T> zero() {
+        return new Parser<T>() {
             @Override
-            Collection<Pair<Character, String>> parse(String input) {
+            Collection<Pair<T, String>> parse(String input) {
                 return new ArrayList<>();
             }
         };
     }
 
-    static <T> Parser<Collection<T>> zeroC() {
-        return new Parser<Collection<T>>() {
-            @Override
-            Collection<Pair<Collection<T>, String>> parse(String input) {
-                return new ArrayList<>();
-            }
-        };
-    }
-
-    static Parser<Character> item() {
+    private static Parser<Character> item() {
         return new Parser<Character>() {
             @Override
             Collection<Pair<Character, String>> parse(String input) {
@@ -107,7 +98,7 @@ abstract class Parser<T> {
         };
     }
 
-    static Parser<Character> sat(Predicate<Character> predicate) {
+    private static Parser<Character> sat(Predicate<Character> predicate) {
         return item().bindM(c -> {
             if (predicate.test(c)) {
                 return returnM(c);
@@ -133,16 +124,27 @@ abstract class Parser<T> {
         return sat(Character::isDigit);
     }
 
-    static Parser<String> word() {
-        return alpha().<String>bindM(x -> word().bindM(xs -> returnM(x + xs))).plus(returnM(""));
+    static Parser<Collection<Character>> word() {
+        return alpha().many();
     }
 
-    static Parser<String> word2() {
+    static Parser<String> identifier() {
+        return alpha().bindM(t1 -> lower().plus(upper()).plus(digit()).many().bindM(t2 -> {
+            StringBuilder result = new StringBuilder(1 + t2.size());
+            result.append(t1);
+            for (Character c : t2) {
+                result.append(c);
+            }
+            return returnM(result.toString());
+        }));
+    }
+
+    private static Parser<String> word2() {
         return neWord2().plus(returnM(""));
     }
 
     private static Parser<String> neWord2() {
-        return alpha().bindM(x -> word().bindM(xs -> returnM(x + xs)));
+        return alpha().bindM(x -> word2().bindM(xs -> returnM(x + xs)));
     }
 }
 
@@ -156,9 +158,10 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        String test1 = "123Hello123";
+        String test1 = "Hello123, {}";
 
         PrintCollection(Parser.word().parse(test1));
         PrintCollection(Parser.digit().many().parse(test1));
+        PrintCollection(Parser.identifier().parse(test1));
     }
 }
