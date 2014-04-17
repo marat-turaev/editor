@@ -9,9 +9,9 @@
 hs_err_pid*
 
 # Intellij
-.idea/
 workspace.xml
 tasks.xml
+*.iws
 
 # Mac
 .DS_Store
