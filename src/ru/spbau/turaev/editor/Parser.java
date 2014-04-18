@@ -1,5 +1,8 @@
 package ru.spbau.turaev.editor;
 
+import ru.spbau.turaev.editor.common.CollectionExtentions;
+import ru.spbau.turaev.editor.common.Pair;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
@@ -61,7 +64,6 @@ abstract class Parser<T> {
 
     /**
      * MonadPlus :: mplus
-     *
      */
     Parser<T> plus(Parser<T> other) {
         return new Parser<T>() {

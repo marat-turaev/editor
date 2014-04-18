@@ -1,6 +1,7 @@
 package ru.spbau.turaev.editor;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import ru.spbau.turaev.editor.common.CollectionExtentions;
+import ru.spbau.turaev.editor.common.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,43 +68,71 @@ public class Combinators {
         return digit().many1().bindM(digits -> Parser.returnM(Integer.parseInt(CollectionExtentions.ConvertToString(digits))));
     }
 
-    private static <B, T> Parser<T> bracket(Parser<B> openBracket, Parser<T> parser, Parser<B> closeBracket) {
-        return openBracket.bindM(t1 -> parser.bindM(t2 -> closeBracket.bindM(t3 -> Parser.returnM(t2))));
+    private static <B, T> Parser<T> ignoreSurrounded(Parser<B> prefix, Parser<T> parser, Parser<B> suffix) {
+        return prefix.bindM(t1 -> parser.bindM(t2 -> suffix.bindM(t3 -> Parser.returnM(t2))));
     }
 
-    static <T> Parser<T> parenthesis(Parser<T> parser) {
-        return bracket(character('('), parser, character(')'));
+    static <T> Parser<T> parenthesised(Parser<T> parser) {
+        return ignoreSurrounded(openParenthesisToken(), parser, closeParenthesisToken());
     }
 
-    static Parser<Num> expression() {
-        throw new NotImplementedException();
+    static <T> Parser<T> spaced(Parser<T> parser) {
+        return ignoreSurrounded(trivia().many(), parser, trivia().many());
     }
 
-    private static Parser<Num> floatNum() {
+    static Parser<Character> sumToken() {
+        return spaced(character('+'));
+    }
+
+    static Parser<Character> subToken() {
+        return spaced(character('-'));
+    }
+
+    static Parser<Character> mulToken() {
+        return spaced(character('*'));
+    }
+
+    static Parser<Character> divToken() {
+        return spaced(character('/'));
+    }
+
+    static Parser<Character> openParenthesisToken() {
+        return spaced(character('('));
+    }
+
+    static Parser<Character> closeParenthesisToken() {
+        return spaced(character(')'));
+    }
+
+    static Parser<Exp> expression() {
+        return parenthesised(sum()).plus(parenthesised(sub())).plus(parenthesised(mul())).plus(parenthesised(div())).plus(parenthesised(num()));
+    }
+
+    private static Parser<Exp> floatNum() {
         return floating().bindM(t -> Parser.returnM(new Num(t)));
     }
 
-    private static Parser<Num> integerNum() {
+    private static Parser<Exp> integerNum() {
         return integer().bindM(t -> Parser.returnM(new Num(t)));
     }
 
-    static Parser<Num> num() {
+    static Parser<Exp> num() {
         return floatNum().plus(integerNum());
     }
 
-    static Parser<Sum> sum() {
-        return expression().bindM(t1 -> character('+').seq(expression().bindM(t2 -> Parser.returnM(new Sum(t1, t2)))));
+    static Parser<Exp> sum() {
+        return expression().bindM(t1 -> sumToken().seq(expression().bindM(t2 -> Parser.returnM(new Sum(t1, t2)))));
     }
 
-    static Parser<Sub> sub() {
-        return expression().bindM(t1 -> character('-').seq(expression().bindM(t2 -> Parser.returnM(new Sub(t1, t2)))));
+    static Parser<Exp> sub() {
+        return expression().bindM(t1 -> subToken().seq(expression().bindM(t2 -> Parser.returnM(new Sub(t1, t2)))));
     }
 
-    static Parser<Mul> mul() {
-        return expression().bindM(t1 -> character('*').seq(expression().bindM(t2 -> Parser.returnM(new Mul(t1, t2)))));
+    static Parser<Exp> mul() {
+        return expression().bindM(t1 -> mulToken().seq(expression().bindM(t2 -> Parser.returnM(new Mul(t1, t2)))));
     }
 
-    static Parser<Div> div() {
-        return expression().bindM(t1 -> character('/').seq(expression().bindM(t2 -> Parser.returnM(new Div(t1, t2)))));
+    static Parser<Exp> div() {
+        return expression().bindM(t1 -> divToken().seq(expression().bindM(t2 -> Parser.returnM(new Div(t1, t2)))));
     }
 }

@@ -1,4 +1,4 @@
-package ru.spbau.turaev.editor;
+package ru.spbau.turaev.editor.common;
 
 import java.util.ArrayList;
 import java.util.Collection;

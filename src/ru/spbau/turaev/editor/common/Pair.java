@@ -1,6 +1,6 @@
-package ru.spbau.turaev.editor;
+package ru.spbau.turaev.editor.common;
 
-class Pair<A, B> {
+public class Pair<A, B> {
     public A first;
     public B second;
 
