@@ -25,4 +25,13 @@ public class CollectionExtentions {
         }
         System.out.println("]");
     }
+
+    public static String ConvertToString(Collection<Character> collection) {
+        char[] tmp = new char[collection.size()];
+        int i = 0;
+        for (Character c : collection) {
+            tmp[i++] = c;
+        }
+        return new String(tmp);
+    }
 }

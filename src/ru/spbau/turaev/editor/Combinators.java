@@ -2,19 +2,9 @@ package ru.spbau.turaev.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 public class Combinators {
-    private static <T> Parser<T> zero() {
-        return new Parser<T>() {
-            @Override
-            Collection<Pair<T, String>> parse(String input) {
-                return new ArrayList<>();
-            }
-        };
-    }
-
     private static Parser<Character> item() {
         return new Parser<Character>() {
             @Override
@@ -34,7 +24,7 @@ public class Combinators {
             if (predicate.test(c)) {
                 return Parser.returnM(c);
             } else {
-                return zero();
+                return Parser.zero();
             }
         });
     }
@@ -51,26 +41,31 @@ public class Combinators {
         return sat(Character::isDigit);
     }
 
-    static Parser<Collection<Character>> word() {
-        return letter().many();
-    }
-
-    static Parser<Collection<Character>> identifier() {
-        return letter().bindM(t1 -> letter().plus(digit()).many().bindM(t2 -> Parser.returnM(CollectionExtentions.concat(t1, t2))));
+    static Parser<String> identifier() {
+        return letter().bindM(t1 -> letter().plus(digit()).many().bindM(t2 -> {
+            Collection<Character> concatenated = CollectionExtentions.concat(t1, t2);
+            String result = CollectionExtentions.ConvertToString(concatenated);
+            return Parser.returnM(result);
+        }));
     }
 
     static Parser<Integer> integer() {
-        return character('-').bindM(t1 -> natural().bindM(t2 -> Parser.returnM(-t2))).plus(natural());
+        return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-t1)).plus(natural());
+    }
+
+    static Parser<Double> floating() {
+        return integer().bindM(t1 -> character('.').seq(natural()).bindM(t2 -> Parser.returnM(Double.parseDouble(t1.toString() + "." + t2.toString())))).plus(integer().bindM(t1 -> Parser.returnM(t1.doubleValue())));
     }
 
     static Parser<Integer> natural() {
-        return digit().many1().bindM(digits -> {
-            char a[] = new char[digits.size()];
-            int i = 0;
-            for (Character digit : digits) {
-                a[i++] = digit;
-            }
-            return Parser.returnM(Integer.parseInt(String.valueOf(a)));
-        });
+        return digit().many1().bindM(digits -> Parser.returnM(Integer.parseInt(CollectionExtentions.ConvertToString(digits))));
+    }
+
+    private static <B, T> Parser<T> bracket(Parser<B> openBracket, Parser<T> parser, Parser<B> closeBracket) {
+        return openBracket.bindM(t1 -> parser.bindM(t2 -> closeBracket.bindM(t3 -> Parser.returnM(t2))));
+    }
+
+    static <T> Parser<T> parenthesis(Parser<T> parser) {
+        return bracket(character('('), parser, character(')'));
     }
 }
