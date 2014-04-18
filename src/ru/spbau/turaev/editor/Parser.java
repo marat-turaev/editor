@@ -8,18 +8,6 @@ abstract class Parser<T> {
     abstract Collection<Pair<T, String>> parse(String input);
 
     /**
-     * MonadPlus :: mzero
-     */
-    public static <T> Parser<T> zero() {
-        return new Parser<T>() {
-            @Override
-            Collection<Pair<T, String>> parse(String input) {
-                return new ArrayList<>();
-            }
-        };
-    }
-
-    /**
      * Monad :: return
      */
     static <T> Parser<T> returnM(T t) {
@@ -60,7 +48,20 @@ abstract class Parser<T> {
     }
 
     /**
+     * MonadPlus :: mzero
+     */
+    public static <T> Parser<T> zero() {
+        return new Parser<T>() {
+            @Override
+            Collection<Pair<T, String>> parse(String input) {
+                return new ArrayList<>();
+            }
+        };
+    }
+
+    /**
      * MonadPlus :: mplus
+     *
      */
     Parser<T> plus(Parser<T> other) {
         return new Parser<T>() {

@@ -1,5 +1,7 @@
 package ru.spbau.turaev.editor;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -41,6 +43,10 @@ public class Combinators {
         return sat(Character::isDigit);
     }
 
+    static Parser<Character> trivia() {
+        return sat(Character::isWhitespace);
+    }
+
     static Parser<String> identifier() {
         return letter().bindM(t1 -> letter().plus(digit()).many().bindM(t2 -> {
             Collection<Character> concatenated = CollectionExtentions.concat(t1, t2);
@@ -50,11 +56,11 @@ public class Combinators {
     }
 
     static Parser<Integer> integer() {
-        return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-t1)).plus(natural());
+        return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-1 * t1)).plus(natural());
     }
 
     static Parser<Double> floating() {
-        return integer().bindM(t1 -> character('.').seq(natural()).bindM(t2 -> Parser.returnM(Double.parseDouble(t1.toString() + "." + t2.toString())))).plus(integer().bindM(t1 -> Parser.returnM(t1.doubleValue())));
+        return integer().bindM(t1 -> character('.').seq(natural()).bindM(t2 -> Parser.returnM(Double.parseDouble(t1.toString() + "." + t2.toString()))));
     }
 
     static Parser<Integer> natural() {
@@ -67,5 +73,37 @@ public class Combinators {
 
     static <T> Parser<T> parenthesis(Parser<T> parser) {
         return bracket(character('('), parser, character(')'));
+    }
+
+    static Parser<Num> expression() {
+        throw new NotImplementedException();
+    }
+
+    private static Parser<Num> floatNum() {
+        return floating().bindM(t -> Parser.returnM(new Num(t)));
+    }
+
+    private static Parser<Num> integerNum() {
+        return integer().bindM(t -> Parser.returnM(new Num(t)));
+    }
+
+    static Parser<Num> num() {
+        return floatNum().plus(integerNum());
+    }
+
+    static Parser<Sum> sum() {
+        return expression().bindM(t1 -> character('+').seq(expression().bindM(t2 -> Parser.returnM(new Sum(t1, t2)))));
+    }
+
+    static Parser<Sub> sub() {
+        return expression().bindM(t1 -> character('-').seq(expression().bindM(t2 -> Parser.returnM(new Sub(t1, t2)))));
+    }
+
+    static Parser<Mul> mul() {
+        return expression().bindM(t1 -> character('*').seq(expression().bindM(t2 -> Parser.returnM(new Mul(t1, t2)))));
+    }
+
+    static Parser<Div> div() {
+        return expression().bindM(t1 -> character('/').seq(expression().bindM(t2 -> Parser.returnM(new Div(t1, t2)))));
     }
 }

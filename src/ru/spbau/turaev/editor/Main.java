@@ -9,11 +9,8 @@ public class Main {
         CollectionExtentions.PrintCollection(Combinators.identifier().parse(test1));
 
         CollectionExtentions.PrintCollection(Combinators.floating().parse("32.66 test"));
-
         CollectionExtentions.PrintCollection(Combinators.floating().parse("32 test"));
-
         CollectionExtentions.PrintCollection(Combinators.floating().parse("-32.4123-123 test"));
-
 
         CollectionExtentions.PrintCollection(Combinators.parenthesis(Combinators.integer()).parse("(423)asd"));
         CollectionExtentions.PrintCollection(Combinators.parenthesis(Combinators.integer()).parse("(42a)asd"));
