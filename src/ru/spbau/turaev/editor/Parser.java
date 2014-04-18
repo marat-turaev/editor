@@ -6,6 +6,7 @@ import ru.spbau.turaev.editor.common.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 abstract class Parser<T> {
     abstract Collection<Pair<T, String>> parse(String input);
@@ -65,12 +66,15 @@ abstract class Parser<T> {
     /**
      * MonadPlus :: mplus
      */
-    Parser<T> plus(Parser<T> other) {
+    Parser<T> plus(Supplier<Parser<T>> other) {
         return new Parser<T>() {
             @Override
             Collection<Pair<T, String>> parse(String input) {
                 Collection<Pair<T, String>> parsedByThis = Parser.this.parse(input);
-                Collection<Pair<T, String>> parsedByOther = other.parse(input);
+                if (parsedByThis.size() != 0) {
+                    return parsedByThis;
+                }
+                Collection<Pair<T, String>> parsedByOther = other.get().parse(input);
                 return CollectionExtentions.concat(parsedByThis, parsedByOther);
             }
         };
@@ -81,6 +85,6 @@ abstract class Parser<T> {
     }
 
     Parser<Collection<T>> many() {
-        return many1().plus(returnM(new ArrayList<>()));
+        return many1().plus(() -> returnM(new ArrayList<>()));
     }
 }

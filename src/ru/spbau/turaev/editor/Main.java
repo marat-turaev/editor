@@ -9,6 +9,15 @@ public class Main {
     public static void main(String[] args) {
         String test1 = "Hello123asd4asd1, asdasd, 123 + 14";
 
+
+        CollectionExtentions.PrintCollection(Combinators.parenthesised(Combinators.integer()).parse("42"));
+        CollectionExtentions.PrintCollection(Combinators.spaced(Combinators.integer()).parse("42"));
+        CollectionExtentions.PrintCollection(Combinators.spaced(Combinators.integer()).parse("42 "));
+        CollectionExtentions.PrintCollection(Combinators.spaced(Combinators.integer()).parse("  42 "));
+        CollectionExtentions.PrintCollection(Combinators.parenthesised(Combinators.integer()).parse("42)"));
+        CollectionExtentions.PrintCollection(Combinators.parenthesised(Combinators.integer()).parse("(42)"));
+
+
         CollectionExtentions.PrintCollection(Combinators.integer().parse("42 hello"));
         CollectionExtentions.PrintCollection(Combinators.integer().parse("-42 hello"));
         CollectionExtentions.PrintCollection(Combinators.identifier().parse(test1));
@@ -16,6 +25,11 @@ public class Main {
         CollectionExtentions.PrintCollection(Combinators.floating().parse("32.66 test"));
         CollectionExtentions.PrintCollection(Combinators.floating().parse("32 test"));
         CollectionExtentions.PrintCollection(Combinators.floating().parse("-32.4123-123 test"));
+
+        CollectionExtentions.PrintCollection(Combinators.floatNum().parse("-32.4123-123 test"));
+        CollectionExtentions.PrintCollection(Combinators.integerNum().parse("-32.4123-123 test"));
+        CollectionExtentions.PrintCollection(Combinators.parenthesised(Combinators.num()).parse("-32.4123-123 test"));
+        CollectionExtentions.PrintCollection(Combinators.num().parse("-32.4123-123 test"));
 
         CollectionExtentions.PrintCollection(Combinators.parenthesised(Combinators.integer()).parse("(423)asd"));
         CollectionExtentions.PrintCollection(Combinators.parenthesised(Combinators.integer()).parse("(42a)asd"));
@@ -38,6 +52,7 @@ public class Main {
 
         String test2 = "1+2";
 
+//        Collection<Pair<Exp, String>> parsed2 = Combinators.parenthesised(Combinators.num()).parse(test2);
         Collection<Pair<Exp, String>> parsed = Combinators.expression().parse(test2);
 
         System.out.println("Done");

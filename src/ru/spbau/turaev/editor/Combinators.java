@@ -49,7 +49,7 @@ public class Combinators {
     }
 
     static Parser<String> identifier() {
-        return letter().bindM(t1 -> letter().plus(digit()).many().bindM(t2 -> {
+        return letter().bindM(t1 -> letter().plus(Combinators::digit).many().bindM(t2 -> {
             Collection<Character> concatenated = CollectionExtentions.concat(t1, t2);
             String result = CollectionExtentions.ConvertToString(concatenated);
             return Parser.returnM(result);
@@ -57,7 +57,7 @@ public class Combinators {
     }
 
     static Parser<Integer> integer() {
-        return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-1 * t1)).plus(natural());
+        return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-1 * t1)).plus(Combinators::natural);
     }
 
     static Parser<Double> floating() {
@@ -105,23 +105,30 @@ public class Combinators {
     }
 
     static Parser<Exp> expression() {
-        return parenthesised(sum()).plus(parenthesised(sub())).plus(parenthesised(mul())).plus(parenthesised(div())).plus(parenthesised(num()));
+//        return parenthesised(sum()).plus(parenthesised(sub())).plus(parenthesised(mul())).plus(parenthesised(div())).plus(parenthesised(num()));
+//        return parenthesised(mul()).plus(parenthesised(div())).plus(parenthesised(sub())).plus(parenthesised(sum())).plus(parenthesised(num()));
+//        return parenthesised(sum()).plus(parenthesised(num()));
+        return sum().plus(Combinators::num);
     }
 
-    private static Parser<Exp> floatNum() {
+    public static Parser<Exp> floatNum() {
         return floating().bindM(t -> Parser.returnM(new Num(t)));
     }
 
-    private static Parser<Exp> integerNum() {
+    public static Parser<Exp> integerNum() {
         return integer().bindM(t -> Parser.returnM(new Num(t)));
     }
 
+    static Parser<Exp> factor() {
+        return parenthesised(num()).plus(Combinators::num).plus(Combinators::expression);
+    }
+
     static Parser<Exp> num() {
-        return floatNum().plus(integerNum());
+        return floatNum().plus(Combinators::integerNum);
     }
 
     static Parser<Exp> sum() {
-        return expression().bindM(t1 -> sumToken().seq(expression().bindM(t2 -> Parser.returnM(new Sum(t1, t2)))));
+        return factor().bindM(t1 -> sumToken().seq(expression().bindM(t2 -> Parser.returnM(new Sum(t1, t2)))));
     }
 
     static Parser<Exp> sub() {
