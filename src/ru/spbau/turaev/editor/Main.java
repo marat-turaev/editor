@@ -3,8 +3,6 @@ package ru.spbau.turaev.editor;
 import ru.spbau.turaev.editor.common.CollectionExtentions;
 import ru.spbau.turaev.editor.common.Pair;
 
-import java.util.Collection;
-
 public class Main {
     public static void main(String[] args) {
         String test1 = "Hello123asd4asd1, asdasd, 123 + 14";
@@ -49,11 +47,15 @@ public class Main {
         );
 
         exp.accept(new PrettyPrinter());
+        System.out.println();
 
-        String test2 = "1+2";
+        String test2 = "(-1  + 1.45 )";
 
-//        Collection<Pair<Exp, String>> parsed2 = Combinators.parenthesised(Combinators.num()).parse(test2);
-        Collection<Pair<Exp, String>> parsed = Combinators.expression().parse(test2);
+        for (Pair<Exp, String> p : Combinators.expression().parse(test2)) {
+            p.first.accept(new PrettyPrinter());
+            System.out.println(";" + p.second);
+        }
+
 
         System.out.println("Done");
     }

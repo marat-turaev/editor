@@ -76,6 +76,10 @@ public class Combinators {
         return ignoreSurrounded(openParenthesisToken(), parser, closeParenthesisToken());
     }
 
+    static <T> Parser<T> maybeParenthesised(Parser<T> parser) {
+        return parenthesised(parser).plus(() -> parser);
+    }
+
     static <T> Parser<T> spaced(Parser<T> parser) {
         return ignoreSurrounded(trivia().many(), parser, trivia().many());
     }
@@ -105,10 +109,19 @@ public class Combinators {
     }
 
     static Parser<Exp> expression() {
-//        return parenthesised(sum()).plus(parenthesised(sub())).plus(parenthesised(mul())).plus(parenthesised(div())).plus(parenthesised(num()));
-//        return parenthesised(mul()).plus(parenthesised(div())).plus(parenthesised(sub())).plus(parenthesised(sum())).plus(parenthesised(num()));
-//        return parenthesised(sum()).plus(parenthesised(num()));
-        return sum().plus(Combinators::num);
+        return maybeParenthesised(mul())
+                .plus(() -> maybeParenthesised(div()))
+                .plus(() -> maybeParenthesised(sum()))
+                .plus(() -> maybeParenthesised(sub()))
+                .plus(() -> maybeParenthesised(factor()));
+    }
+
+    static Parser<Exp> parenthesisedExpression() {
+        return parenthesised(mul())
+                .plus(() -> parenthesised(div()))
+                .plus(() -> parenthesised(sum()))
+                .plus(() -> parenthesised(sub()))
+                .plus(() -> parenthesised(factor()));
     }
 
     public static Parser<Exp> floatNum() {
@@ -120,7 +133,7 @@ public class Combinators {
     }
 
     static Parser<Exp> factor() {
-        return parenthesised(num()).plus(Combinators::num).plus(Combinators::expression);
+        return num().plus(Combinators::parenthesisedExpression);
     }
 
     static Parser<Exp> num() {
@@ -132,14 +145,14 @@ public class Combinators {
     }
 
     static Parser<Exp> sub() {
-        return expression().bindM(t1 -> subToken().seq(expression().bindM(t2 -> Parser.returnM(new Sub(t1, t2)))));
+        return factor().bindM(t1 -> subToken().seq(expression().bindM(t2 -> Parser.returnM(new Sub(t1, t2)))));
     }
 
     static Parser<Exp> mul() {
-        return expression().bindM(t1 -> mulToken().seq(expression().bindM(t2 -> Parser.returnM(new Mul(t1, t2)))));
+        return factor().bindM(t1 -> mulToken().seq(expression().bindM(t2 -> Parser.returnM(new Mul(t1, t2)))));
     }
 
     static Parser<Exp> div() {
-        return expression().bindM(t1 -> divToken().seq(expression().bindM(t2 -> Parser.returnM(new Div(t1, t2)))));
+        return factor().bindM(t1 -> divToken().seq(expression().bindM(t2 -> Parser.returnM(new Div(t1, t2)))));
     }
 }
