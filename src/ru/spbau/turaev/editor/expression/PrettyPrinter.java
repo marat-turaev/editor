@@ -1,6 +1,4 @@
-package ru.spbau.turaev.editor;
-
-import ru.spbau.turaev.editor.parser.*;
+package ru.spbau.turaev.editor.expression;
 
 public class PrettyPrinter implements ExpVisitor {
 

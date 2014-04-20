@@ -2,6 +2,7 @@ package ru.spbau.turaev.editor.parser;
 
 import ru.spbau.turaev.editor.common.CollectionExtentions;
 import ru.spbau.turaev.editor.common.Pair;
+import ru.spbau.turaev.editor.expression.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +10,7 @@ import java.util.function.Predicate;
 
 
 //TODO: Review access modifiers
-public class Combinators {
+public class Combinator {
     private static Parser<Character> item() {
         return new Parser<Character>() {
             @Override
@@ -24,7 +25,7 @@ public class Combinators {
         };
     }
 
-    private static Parser<Character> sat(Predicate<Character> predicate) {
+    private static Parser<Character> satisfy(Predicate<Character> predicate) {
         return item().bindM(c -> {
             if (predicate.test(c)) {
                 return Parser.returnM(c);
@@ -35,23 +36,23 @@ public class Combinators {
     }
 
     public static Parser<Character> character(char c) {
-        return sat(p -> p == c);
+        return satisfy(p -> p == c);
     }
 
     public static Parser<Character> letter() {
-        return sat(Character::isLetter);
+        return satisfy(Character::isLetter);
     }
 
     public static Parser<Character> digit() {
-        return sat(Character::isDigit);
+        return satisfy(Character::isDigit);
     }
 
     public static Parser<Character> trivia() {
-        return sat(Character::isWhitespace);
+        return satisfy(Character::isWhitespace);
     }
 
     public static Parser<String> identifier() {
-        return letter().bindM(t1 -> letter().plus(Combinators::digit).many().bindM(t2 -> {
+        return letter().bindM(t1 -> letter().plus(Combinator::digit).many().bindM(t2 -> {
             Collection<Character> concatenated = CollectionExtentions.concat(t1, t2);
             String result = CollectionExtentions.ConvertToString(concatenated);
             return Parser.returnM(result);
@@ -59,7 +60,7 @@ public class Combinators {
     }
 
     public static Parser<Integer> integer() {
-        return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-1 * t1)).plus(Combinators::natural);
+        return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-1 * t1)).plus(Combinator::natural);
     }
 
     public static Parser<Double> floating() {
@@ -135,11 +136,11 @@ public class Combinators {
     }
 
     static Parser<Exp> factor() {
-        return num().plus(Combinators::parenthesisedExpression);
+        return num().plus(Combinator::parenthesisedExpression);
     }
 
     public static Parser<Exp> num() {
-        return floatNum().plus(Combinators::integerNum);
+        return floatNum().plus(Combinator::integerNum);
     }
 
     static Parser<Exp> sum() {

@@ -1,4 +1,4 @@
-package ru.spbau.turaev.editor.parser;
+package ru.spbau.turaev.editor.expression;
 
 abstract class BiExp implements Exp {
     public final Exp left;

@@ -1,6 +1,4 @@
-package ru.spbau.turaev.editor.parser;
-
-import ru.spbau.turaev.editor.ExpVisitor;
+package ru.spbau.turaev.editor.expression;
 
 public class Div extends BiExp {
     public Div(Exp left, Exp right) {

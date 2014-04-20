@@ -1,6 +1,4 @@
-package ru.spbau.turaev.editor;
-
-import ru.spbau.turaev.editor.parser.*;
+package ru.spbau.turaev.editor.expression;
 
 public abstract class ExpVisitorAdapter implements ExpVisitor {
     @Override

@@ -1,6 +1,4 @@
-package ru.spbau.turaev.editor.parser;
-
-import ru.spbau.turaev.editor.ExpVisitor;
+package ru.spbau.turaev.editor.expression;
 
 public interface Exp {
     public void accept(ExpVisitor visitor);

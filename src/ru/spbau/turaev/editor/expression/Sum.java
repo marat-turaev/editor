@@ -1,9 +1,7 @@
-package ru.spbau.turaev.editor.parser;
+package ru.spbau.turaev.editor.expression;
 
-import ru.spbau.turaev.editor.ExpVisitor;
-
-public class Mul extends BiExp {
-    public Mul(Exp left, Exp right) {
+public class Sum extends BiExp {
+    public Sum(Exp left, Exp right) {
         super(left, right);
     }
 
