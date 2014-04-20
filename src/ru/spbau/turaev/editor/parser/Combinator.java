@@ -63,6 +63,7 @@ public class Combinator {
         return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-1 * t1)).plus(Combinator::natural);
     }
 
+    //TODO: Conver int.int to float more efficiently
     public static Parser<Double> floating() {
         return integer().bindM(t1 -> character('.').seq(natural()).bindM(t2 -> Parser.returnM(Double.parseDouble(t1.toString() + "." + t2.toString()))));
     }
@@ -72,7 +73,7 @@ public class Combinator {
     }
 
     private static <B, T> Parser<T> ignoreSurrounded(Parser<B> prefix, Parser<T> parser, Parser<B> suffix) {
-        return prefix.bindM(t1 -> parser.bindM(t2 -> suffix.bindM(t3 -> Parser.returnM(t2))));
+        return prefix.seq(parser.bindM(t2 -> suffix.seq(Parser.returnM(t2))));
     }
 
     public static <T> Parser<T> parenthesised(Parser<T> parser) {
