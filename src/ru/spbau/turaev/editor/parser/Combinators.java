@@ -1,4 +1,4 @@
-package ru.spbau.turaev.editor;
+package ru.spbau.turaev.editor.parser;
 
 import ru.spbau.turaev.editor.common.CollectionExtentions;
 import ru.spbau.turaev.editor.common.Pair;
@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
+
+//TODO: Review access modifiers
 public class Combinators {
     private static Parser<Character> item() {
         return new Parser<Character>() {
             @Override
-            Collection<Pair<Character, String>> parse(String input) {
+            public Collection<Pair<Character, String>> parse(String input) {
                 ArrayList<Pair<Character, String>> arrayList = new ArrayList<>();
                 if (input.isEmpty()) {
                     return arrayList;
@@ -32,23 +34,23 @@ public class Combinators {
         });
     }
 
-    static Parser<Character> character(char c) {
+    public static Parser<Character> character(char c) {
         return sat(p -> p == c);
     }
 
-    static Parser<Character> letter() {
+    public static Parser<Character> letter() {
         return sat(Character::isLetter);
     }
 
-    static Parser<Character> digit() {
+    public static Parser<Character> digit() {
         return sat(Character::isDigit);
     }
 
-    static Parser<Character> trivia() {
+    public static Parser<Character> trivia() {
         return sat(Character::isWhitespace);
     }
 
-    static Parser<String> identifier() {
+    public static Parser<String> identifier() {
         return letter().bindM(t1 -> letter().plus(Combinators::digit).many().bindM(t2 -> {
             Collection<Character> concatenated = CollectionExtentions.concat(t1, t2);
             String result = CollectionExtentions.ConvertToString(concatenated);
@@ -56,15 +58,15 @@ public class Combinators {
         }));
     }
 
-    static Parser<Integer> integer() {
+    public static Parser<Integer> integer() {
         return character('-').seq(natural()).bindM(t1 -> Parser.returnM(-1 * t1)).plus(Combinators::natural);
     }
 
-    static Parser<Double> floating() {
+    public static Parser<Double> floating() {
         return integer().bindM(t1 -> character('.').seq(natural()).bindM(t2 -> Parser.returnM(Double.parseDouble(t1.toString() + "." + t2.toString()))));
     }
 
-    static Parser<Integer> natural() {
+    public static Parser<Integer> natural() {
         return digit().many1().bindM(digits -> Parser.returnM(Integer.parseInt(CollectionExtentions.ConvertToString(digits))));
     }
 
@@ -72,43 +74,43 @@ public class Combinators {
         return prefix.bindM(t1 -> parser.bindM(t2 -> suffix.bindM(t3 -> Parser.returnM(t2))));
     }
 
-    static <T> Parser<T> parenthesised(Parser<T> parser) {
+    public static <T> Parser<T> parenthesised(Parser<T> parser) {
         return ignoreSurrounded(openParenthesisToken(), parser, closeParenthesisToken());
     }
 
-    static <T> Parser<T> maybeParenthesised(Parser<T> parser) {
+    public static <T> Parser<T> maybeParenthesised(Parser<T> parser) {
         return parenthesised(parser).plus(() -> parser);
     }
 
-    static <T> Parser<T> spaced(Parser<T> parser) {
+    public static <T> Parser<T> spaced(Parser<T> parser) {
         return ignoreSurrounded(trivia().many(), parser, trivia().many());
     }
 
-    static Parser<Character> sumToken() {
+    public static Parser<Character> sumToken() {
         return spaced(character('+'));
     }
 
-    static Parser<Character> subToken() {
+    public static Parser<Character> subToken() {
         return spaced(character('-'));
     }
 
-    static Parser<Character> mulToken() {
+    public static Parser<Character> mulToken() {
         return spaced(character('*'));
     }
 
-    static Parser<Character> divToken() {
+    public static Parser<Character> divToken() {
         return spaced(character('/'));
     }
 
-    static Parser<Character> openParenthesisToken() {
+    public static Parser<Character> openParenthesisToken() {
         return spaced(character('('));
     }
 
-    static Parser<Character> closeParenthesisToken() {
+    public static Parser<Character> closeParenthesisToken() {
         return spaced(character(')'));
     }
 
-    static Parser<Exp> expression() {
+    public static Parser<Exp> expression() {
         return maybeParenthesised(mul())
                 .plus(() -> maybeParenthesised(div()))
                 .plus(() -> maybeParenthesised(sum()))
@@ -116,7 +118,7 @@ public class Combinators {
                 .plus(() -> maybeParenthesised(factor()));
     }
 
-    static Parser<Exp> parenthesisedExpression() {
+    public static Parser<Exp> parenthesisedExpression() {
         return parenthesised(mul())
                 .plus(() -> parenthesised(div()))
                 .plus(() -> parenthesised(sum()))
@@ -136,7 +138,7 @@ public class Combinators {
         return num().plus(Combinators::parenthesisedExpression);
     }
 
-    static Parser<Exp> num() {
+    public static Parser<Exp> num() {
         return floatNum().plus(Combinators::integerNum);
     }
 

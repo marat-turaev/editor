@@ -2,6 +2,7 @@ package ru.spbau.turaev.editor;
 
 import ru.spbau.turaev.editor.common.CollectionExtentions;
 import ru.spbau.turaev.editor.common.Pair;
+import ru.spbau.turaev.editor.parser.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,7 +15,6 @@ public class Main {
         CollectionExtentions.PrintCollection(Combinators.spaced(Combinators.integer()).parse("  42 "));
         CollectionExtentions.PrintCollection(Combinators.parenthesised(Combinators.integer()).parse("42)"));
         CollectionExtentions.PrintCollection(Combinators.parenthesised(Combinators.integer()).parse("(42)"));
-
 
         CollectionExtentions.PrintCollection(Combinators.integer().parse("42 hello"));
         CollectionExtentions.PrintCollection(Combinators.integer().parse("-42 hello"));
@@ -49,13 +49,14 @@ public class Main {
         exp.accept(new PrettyPrinter());
         System.out.println();
 
-        String test2 = "(-1  + 1.45 )";
+//        String test2 = "(10.0 + 21.0) * (22.0 + 14.0) + (15 + 88) / 0";
+
+        String test2 = "(15 + 88) + (10.0 + 21.0) * (22.0 + 14.0)/ 0";
 
         for (Pair<Exp, String> p : Combinators.expression().parse(test2)) {
             p.first.accept(new PrettyPrinter());
             System.out.println(";" + p.second);
         }
-
 
         System.out.println("Done");
     }

@@ -1,4 +1,4 @@
-package ru.spbau.turaev.editor;
+package ru.spbau.turaev.editor.parser;
 
 import ru.spbau.turaev.editor.common.CollectionExtentions;
 import ru.spbau.turaev.editor.common.Pair;
@@ -8,16 +8,16 @@ import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-abstract class Parser<T> {
-    abstract Collection<Pair<T, String>> parse(String input);
+public abstract class Parser<T> {
+    public abstract Collection<Pair<T, String>> parse(String input);
 
     /**
      * Monad :: return
      */
-    static <T> Parser<T> returnM(T t) {
+    public static <T> Parser<T> returnM(T t) {
         return new Parser<T>() {
             @Override
-            Collection<Pair<T, String>> parse(String input) {
+            public Collection<Pair<T, String>> parse(String input) {
                 ArrayList<Pair<T, String>> result = new ArrayList<>();
                 result.add(new Pair<>(t, input));
                 return result;
@@ -38,7 +38,7 @@ abstract class Parser<T> {
     <R> Parser<R> bindM(Function<T, Parser<R>> arrow) {
         return new Parser<R>() {
             @Override
-            Collection<Pair<R, String>> parse(String input) {
+            public Collection<Pair<R, String>> parse(String input) {
                 Collection<Pair<R, String>> result = new ArrayList<>();
                 for (Pair<T, String> p : Parser.this.parse(input)) {
                     T t = p.first;
@@ -57,7 +57,7 @@ abstract class Parser<T> {
     public static <T> Parser<T> zero() {
         return new Parser<T>() {
             @Override
-            Collection<Pair<T, String>> parse(String input) {
+            public Collection<Pair<T, String>> parse(String input) {
                 return new ArrayList<>();
             }
         };
@@ -69,7 +69,7 @@ abstract class Parser<T> {
     Parser<T> plus(Supplier<Parser<T>> other) {
         return new Parser<T>() {
             @Override
-            Collection<Pair<T, String>> parse(String input) {
+            public Collection<Pair<T, String>> parse(String input) {
                 Collection<Pair<T, String>> parsedByThis = Parser.this.parse(input);
                 if (parsedByThis.size() != 0) {
                     return parsedByThis;
