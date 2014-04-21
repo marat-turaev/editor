@@ -7,35 +7,31 @@ public class PrettyPrinter implements ExpVisitor {
     }
 
     public void visit(Div exp) {
-        Div div = exp;
-        div.left.accept(this);
+        exp.left.accept(this);
         System.out.print(" / ");
-        div.right.accept(this);
+        exp.right.accept(this);
     }
 
     public void visit(Mul exp) {
-        Mul mul = exp;
-        mul.left.accept(this);
+        exp.left.accept(this);
         System.out.print(" * ");
-        mul.right.accept(this);
+        exp.right.accept(this);
     }
 
     public void visit(Sum exp) {
-        Sum sum = exp;
         System.out.print("(");
-        sum.left.accept(this);
+        exp.left.accept(this);
         System.out.print(" + ");
-        sum.right.accept(this);
+        exp.right.accept(this);
         System.out.print(")");
     }
 
     @Override
     public void visit(Sub exp) {
-        Sub sum = exp;
         System.out.print("(");
-        sum.left.accept(this);
+        exp.left.accept(this);
         System.out.print(" - ");
-        sum.right.accept(this);
+        exp.right.accept(this);
         System.out.print(")");
     }
 }

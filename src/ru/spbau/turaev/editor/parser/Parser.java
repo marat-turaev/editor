@@ -81,7 +81,7 @@ public abstract class Parser<T> {
     }
 
     Parser<Collection<T>> many1() {
-        return this.bindM(t -> many().<Collection<T>>bindM(t1 -> returnM(CollectionExtentions.concat(t, t1))));
+        return this.bindM(t1 -> many().<Collection<T>>bindM(t2 -> returnM(CollectionExtentions.concat(t1, t2))));
     }
 
     Parser<Collection<T>> many() {
