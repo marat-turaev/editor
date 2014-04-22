@@ -29,7 +29,7 @@ public abstract class Parser<T> {
      * Monad :: >>
      */
     <R> Parser<R> seq(Parser<R> parser) {
-        return this.bindM((t) -> parser);
+        return this.bindM(t -> parser);
     }
 
     /**

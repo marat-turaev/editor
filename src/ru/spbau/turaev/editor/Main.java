@@ -3,7 +3,7 @@ package ru.spbau.turaev.editor;
 import ru.spbau.turaev.editor.common.CollectionExtentions;
 import ru.spbau.turaev.editor.common.Pair;
 import ru.spbau.turaev.editor.expression.*;
-import ru.spbau.turaev.editor.parser.*;
+import ru.spbau.turaev.editor.parser.Combinator;
 
 public class Main {
     public static void main(String[] args) {
@@ -50,9 +50,7 @@ public class Main {
         exp.accept(new PrettyPrinter());
         System.out.println();
 
-//        String test2 = "(10.0 + 21.0) * (22.0 + 14.0) + (15 + 88) / 0";
-
-        String test2 = "(15 + 88) + (10.0 + 21.0) * (22.0 + 14.0)/ 0";
+        String test2 = "-111.34 + 123 - 5";
 
         for (Pair<Exp, String> p : Combinator.expression().parse(test2)) {
             p.first.accept(new PrettyPrinter());
