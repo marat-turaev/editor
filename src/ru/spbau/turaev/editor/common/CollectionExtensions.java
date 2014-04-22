@@ -3,7 +3,7 @@ package ru.spbau.turaev.editor.common;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CollectionExtentions {
+public class CollectionExtensions {
     public static <T> Collection<T> concat(T head, Collection<T> tail) {
         Collection<T> result = new ArrayList<>();
         result.add(head);

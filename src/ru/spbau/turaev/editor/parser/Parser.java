@@ -1,6 +1,6 @@
 package ru.spbau.turaev.editor.parser;
 
-import ru.spbau.turaev.editor.common.CollectionExtentions;
+import ru.spbau.turaev.editor.common.CollectionExtensions;
 import ru.spbau.turaev.editor.common.Pair;
 
 import java.util.ArrayList;
@@ -74,14 +74,13 @@ public abstract class Parser<T> {
                 if (parsedByThis.size() != 0) {
                     return parsedByThis;
                 }
-                Collection<Pair<T, String>> parsedByOther = other.get().parse(input);
-                return CollectionExtentions.concat(parsedByThis, parsedByOther);
+                return other.get().parse(input);
             }
         };
     }
 
     Parser<Collection<T>> many1() {
-        return this.bindM(t1 -> many().<Collection<T>>bindM(t2 -> returnM(CollectionExtentions.concat(t1, t2))));
+        return this.bindM(t1 -> many().<Collection<T>>bindM(t2 -> returnM(CollectionExtensions.concat(t1, t2))));
     }
 
     Parser<Collection<T>> many() {

@@ -2,6 +2,18 @@ package ru.spbau.turaev.editor.expression;
 
 public abstract class ExpVisitorAdapter implements ExpVisitor {
     @Override
+    public void visit(Sub sum) {
+    }
+
+    @Override
+    public void visit(Identifier identifier) {
+    }
+
+    @Override
+    public void visit(Equality equality) {
+    }
+
+    @Override
     public void visit(Num num) {
     }
 

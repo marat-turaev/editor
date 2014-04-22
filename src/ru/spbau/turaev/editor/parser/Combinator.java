@@ -1,18 +1,16 @@
 package ru.spbau.turaev.editor.parser;
 
-import ru.spbau.turaev.editor.common.CollectionExtentions;
+import ru.spbau.turaev.editor.common.CollectionExtensions;
 import ru.spbau.turaev.editor.expression.*;
 
 import java.util.Collection;
 
-
-//TODO: Review access modifiers
 public class Combinator {
-    public static Parser<String> identifier() {
+    public static Parser<Exp> identifier() {
         return CombinatorBlocks.letter().bindM(t1 -> CombinatorBlocks.letter().plus(CombinatorBlocks::digit).many().bindM(t2 -> {
-            Collection<Character> concatenated = CollectionExtentions.concat(t1, t2);
-            String result = CollectionExtentions.ConvertToString(concatenated);
-            return Parser.returnM(result);
+            Collection<Character> concatenated = CollectionExtensions.concat(t1, t2);
+            String result = CollectionExtensions.ConvertToString(concatenated);
+            return Parser.returnM(new Identifier(result));
         }));
     }
 
@@ -26,19 +24,7 @@ public class Combinator {
     }
 
     private static Parser<Integer> natural() {
-        return CombinatorBlocks.digit().many1().bindM(digits -> Parser.returnM(Integer.parseInt(CollectionExtentions.ConvertToString(digits))));
-    }
-
-    private static <B, T> Parser<T> ignoreSurrounded(Parser<B> prefix, Parser<T> parser, Parser<B> suffix) {
-        return prefix.seq(parser.bindM(t2 -> suffix.seq(Parser.returnM(t2))));
-    }
-
-    public static <T> Parser<T> parenthesised(Parser<T> parser) {
-        return ignoreSurrounded(CombinatorBlocks.openParenthesisToken(), parser, CombinatorBlocks.closeParenthesisToken());
-    }
-
-    public static <T> Parser<T> spaced(Parser<T> parser) {
-        return ignoreSurrounded(CombinatorBlocks.trivia().many(), parser, CombinatorBlocks.trivia().many());
+        return CombinatorBlocks.digit().many1().bindM(digits -> Parser.returnM(Integer.parseInt(CollectionExtensions.ConvertToString(digits))));
     }
 
     public static Parser<Exp> expression() {
@@ -50,7 +36,7 @@ public class Combinator {
     }
 
     private static Parser<Exp> primary() {
-        return num().plus(() -> parenthesised(expression()));
+        return num().plus(() -> equality()).plus(() -> identifier()).plus(() -> CombinatorBlocks.parenthesised(expression()));
     }
 
     public static Parser<Exp> floatNum() {
@@ -79,5 +65,9 @@ public class Combinator {
 
     public static Parser<Exp> div() {
         return primary().bindM(t1 -> CombinatorBlocks.divToken().seq(term().bindM(t2 -> Parser.returnM(new Div(t1, t2)))));
+    }
+
+    public static Parser<Exp> equality() {
+        return identifier().bindM(t1 -> CombinatorBlocks.equalityToken().seq(expression().bindM(t2 -> Parser.returnM(new Equality(t1, t2)))));
     }
 }

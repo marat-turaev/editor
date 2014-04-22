@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-/**
- * Created by marat on 22/04/14.
- */
 public class CombinatorBlocks {
     private static Parser<Character> item() {
         return new Parser<Character>() {
@@ -50,27 +47,43 @@ public class CombinatorBlocks {
         return satisfy(Character::isWhitespace);
     }
 
+    public static <T> Parser<T> spaced(Parser<T> parser) {
+        return ignoreSurrounded(trivia().many(), parser, trivia().many());
+    }
+
     public static Parser<Character> sumToken() {
-        return Combinator.spaced(character('+'));
+        return spaced(character('+'));
     }
 
     public static Parser<Character> subToken() {
-        return Combinator.spaced(character('-'));
+        return spaced(character('-'));
     }
 
     public static Parser<Character> mulToken() {
-        return Combinator.spaced(character('*'));
+        return spaced(character('*'));
     }
 
     public static Parser<Character> divToken() {
-        return Combinator.spaced(character('/'));
+        return spaced(character('/'));
+    }
+
+    public static Parser<Character> equalityToken() {
+        return spaced(character('='));
     }
 
     public static Parser<Character> openParenthesisToken() {
-        return Combinator.spaced(character('('));
+        return spaced(character('('));
     }
 
     public static Parser<Character> closeParenthesisToken() {
-        return Combinator.spaced(character(')'));
+        return spaced(character(')'));
+    }
+
+    private static <B, T> Parser<T> ignoreSurrounded(Parser<B> prefix, Parser<T> parser, Parser<B> suffix) {
+        return prefix.seq(parser.bindM(t2 -> suffix.seq(Parser.returnM(t2))));
+    }
+
+    public static <T> Parser<T> parenthesised(Parser<T> parser) {
+        return ignoreSurrounded(openParenthesisToken(), parser, closeParenthesisToken());
     }
 }

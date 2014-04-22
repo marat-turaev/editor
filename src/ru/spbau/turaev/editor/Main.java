@@ -1,61 +1,51 @@
 package ru.spbau.turaev.editor;
 
-import ru.spbau.turaev.editor.common.CollectionExtentions;
-import ru.spbau.turaev.editor.common.Pair;
+import ru.spbau.turaev.editor.common.CollectionExtensions;
 import ru.spbau.turaev.editor.expression.*;
 import ru.spbau.turaev.editor.parser.Combinator;
+import ru.spbau.turaev.editor.parser.CombinatorBlocks;
+import ru.spbau.turaev.editor.parser.ParserFacade;
 
 public class Main {
     public static void main(String[] args) {
         String test1 = "Hello123asd4asd1, asdasd, 123 + 14";
 
 
-        CollectionExtentions.PrintCollection(Combinator.parenthesised(Combinator.integer()).parse("42"));
-        CollectionExtentions.PrintCollection(Combinator.spaced(Combinator.integer()).parse("42"));
-        CollectionExtentions.PrintCollection(Combinator.spaced(Combinator.integer()).parse("42 "));
-        CollectionExtentions.PrintCollection(Combinator.spaced(Combinator.integer()).parse("  42 "));
-        CollectionExtentions.PrintCollection(Combinator.parenthesised(Combinator.integer()).parse("42)"));
-        CollectionExtentions.PrintCollection(Combinator.parenthesised(Combinator.integer()).parse("(42)"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.parenthesised(Combinator.integer()).parse("42"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.spaced(Combinator.integer()).parse("42"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.spaced(Combinator.integer()).parse("42 "));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.spaced(Combinator.integer()).parse("  42 "));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.parenthesised(Combinator.integer()).parse("42)"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.parenthesised(Combinator.integer()).parse("(42)"));
 
-        CollectionExtentions.PrintCollection(Combinator.integer().parse("42 hello"));
-        CollectionExtentions.PrintCollection(Combinator.integer().parse("-42 hello"));
-        CollectionExtentions.PrintCollection(Combinator.identifier().parse(test1));
+        CollectionExtensions.PrintCollection(Combinator.integer().parse("42 hello"));
+        CollectionExtensions.PrintCollection(Combinator.integer().parse("-42 hello"));
+        CollectionExtensions.PrintCollection(Combinator.identifier().parse(test1));
 
-        CollectionExtentions.PrintCollection(Combinator.floating().parse("32.66 test"));
-        CollectionExtentions.PrintCollection(Combinator.floating().parse("32 test"));
-        CollectionExtentions.PrintCollection(Combinator.floating().parse("-32.4123-123 test"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.letter().parse("32.66 test"));
+        CollectionExtensions.PrintCollection(Combinator.floating().parse("32 test"));
+        CollectionExtensions.PrintCollection(Combinator.floating().parse("-32.4123-123 test"));
 
-        CollectionExtentions.PrintCollection(Combinator.floatNum().parse("-32.4123-123 test"));
-        CollectionExtentions.PrintCollection(Combinator.integerNum().parse("-32.4123-123 test"));
-        CollectionExtentions.PrintCollection(Combinator.parenthesised(Combinator.num()).parse("-32.4123-123 test"));
-        CollectionExtentions.PrintCollection(Combinator.num().parse("-32.4123-123 test"));
+        CollectionExtensions.PrintCollection(Combinator.floatNum().parse("-32.4123-123 test"));
+        CollectionExtensions.PrintCollection(Combinator.integerNum().parse("-32.4123-123 test"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.parenthesised(Combinator.num()).parse("-32.4123-123 test"));
+        CollectionExtensions.PrintCollection(Combinator.num().parse("-32.4123-123 test"));
 
-        CollectionExtentions.PrintCollection(Combinator.parenthesised(Combinator.integer()).parse("(423)asd"));
-        CollectionExtentions.PrintCollection(Combinator.parenthesised(Combinator.integer()).parse("(42a)asd"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.parenthesised(Combinator.integer()).parse("(423)asd"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.parenthesised(Combinator.integer()).parse("(42a)asd"));
 
 
-        CollectionExtentions.PrintCollection(Combinator.spaced(Combinator.integer()).parse("   42   aasd"));
+        CollectionExtensions.PrintCollection(CombinatorBlocks.spaced(Combinator.integer()).parse("   42   aasd"));
 
-        Exp exp = new Sum(
-                new Mul(
-                        new Sum(new Num(10.0), new Num(21.0)),
-                        new Sum(new Num(22.0), new Num(14.0))
-                ),
-                new Div(
-                        new Sum(new Num(15), new Num(88)),
-                        new Num(0)
-                )
-        );
+        Equality equality = new Equality(new Identifier("x"), new Sum(new Num(4), new Num(5)));
 
+
+        String test2 = "x = 1 + 1 * x -  89";
+
+        ParserFacade facade = new ParserFacade();
+        Exp exp = facade.parseExpression(test2);
         exp.accept(new PrettyPrinter());
-        System.out.println();
-
-        String test2 = "-111.34 + 123 - 5";
-
-        for (Pair<Exp, String> p : Combinator.expression().parse(test2)) {
-            p.first.accept(new PrettyPrinter());
-            System.out.println(";" + p.second);
-        }
+        System.out.println(";" + facade.unparsed);
 
         System.out.println("Done");
     }
