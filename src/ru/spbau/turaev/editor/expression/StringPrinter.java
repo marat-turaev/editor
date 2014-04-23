@@ -1,56 +1,60 @@
 package ru.spbau.turaev.editor.expression;
 
-public class PrettyPrinter implements ExpVisitor {
+public class StringPrinter implements ExpVisitor {
+    private StringBuilder output = new StringBuilder();
+
     @Override
     public void visit(Num exp) {
-        System.out.print(exp.number);
+        output.append(exp.number);
     }
 
     @Override
     public void visit(Identifier exp) {
-        System.out.print(exp.name);
+        output.append(exp.name);
     }
 
     @Override
     public void visit(Equality exp) {
-        System.out.print("(");
+        output.append("(");
         exp.left.accept(this);
-        System.out.print(" = ");
+        output.append(" = ");
         exp.right.accept(this);
-        System.out.print(")");
+        output.append(")");
     }
 
     @Override
     public void visit(Div exp) {
         exp.left.accept(this);
-        System.out.print(" / ");
+        output.append(" / ");
         exp.right.accept(this);
     }
 
     @Override
     public void visit(Mul exp) {
         exp.left.accept(this);
-        System.out.print(" * ");
+        output.append(" * ");
         exp.right.accept(this);
     }
 
     @Override
     public void visit(Sum exp) {
-        System.out.print("(");
+        output.append("(");
         exp.left.accept(this);
-        System.out.print(" + ");
+        output.append(" + ");
         exp.right.accept(this);
-        System.out.print(")");
+        output.append(")");
     }
 
     @Override
     public void visit(Sub exp) {
-        System.out.print("(");
+        output.append("(");
         exp.left.accept(this);
-        System.out.print(" - ");
+        output.append(" - ");
         exp.right.accept(this);
-        System.out.print(")");
+        output.append(")");
+    }
+
+    public String getResult() {
+        return output.toString();
     }
 }
-
-

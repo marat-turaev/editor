@@ -31,51 +31,51 @@ public class CombinatorBlocks {
         });
     }
 
-    public static Parser<Character> character(char c) {
+    static Parser<Character> character(char c) {
         return satisfy(p -> p == c);
     }
 
-    public static Parser<Character> letter() {
+    static Parser<Character> letter() {
         return satisfy(Character::isLetter);
     }
 
-    public static Parser<Character> digit() {
+    static Parser<Character> digit() {
         return satisfy(Character::isDigit);
     }
 
-    public static Parser<Character> trivia() {
+    private static Parser<Character> trivia() {
         return satisfy(Character::isWhitespace);
     }
 
-    public static <T> Parser<T> spaced(Parser<T> parser) {
+    private static <T> Parser<T> spaced(Parser<T> parser) {
         return ignoreSurrounded(trivia().many(), parser, trivia().many());
     }
 
-    public static Parser<Character> sumToken() {
+    static Parser<Character> sumToken() {
         return spaced(character('+'));
     }
 
-    public static Parser<Character> subToken() {
+    static Parser<Character> subToken() {
         return spaced(character('-'));
     }
 
-    public static Parser<Character> mulToken() {
+    static Parser<Character> mulToken() {
         return spaced(character('*'));
     }
 
-    public static Parser<Character> divToken() {
+    static Parser<Character> divToken() {
         return spaced(character('/'));
     }
 
-    public static Parser<Character> equalityToken() {
+    static Parser<Character> equalityToken() {
         return spaced(character('='));
     }
 
-    public static Parser<Character> openParenthesisToken() {
+    private static Parser<Character> openParenthesisToken() {
         return spaced(character('('));
     }
 
-    public static Parser<Character> closeParenthesisToken() {
+    private static Parser<Character> closeParenthesisToken() {
         return spaced(character(')'));
     }
 
