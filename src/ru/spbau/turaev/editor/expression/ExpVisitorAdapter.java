@@ -31,7 +31,7 @@ public abstract class ExpVisitorAdapter implements ExpVisitor {
 }
 
 //    public static void main(String[] args) {
-//        Exp exp = new Sum(
+//        Expression exp = new Sum(
 //                new Mul(
 //                        new Sum(new Num(10.0), new Num(21.0)),
 //                        new Sum(new Num(22.0), new Num(14.0))
@@ -59,7 +59,7 @@ public abstract class ExpVisitorAdapter implements ExpVisitor {
 //
 //        exp.accept(new PrettyPrinter());
 //
-////        Iterator<Exp> i = exp.iterator();
+////        Iterator<Expression> i = exp.iterator();
 ////        while (i.hasNext()) {
 //        // TODO: implement
 ////        }

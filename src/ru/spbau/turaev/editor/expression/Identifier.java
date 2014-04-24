@@ -1,6 +1,6 @@
 package ru.spbau.turaev.editor.expression;
 
-public class Identifier implements Exp {
+public class Identifier extends MonoExpression {
     public final String name;
 
     public Identifier(String name) {

@@ -1,8 +1,13 @@
 package ru.spbau.turaev.editor.expression;
 
-public class Div extends BiExp {
-    public Div(Exp left, Exp right) {
+public class Div extends MathBinaryOperation {
+    public Div(Expression left, Expression right) {
         super(left, right);
+    }
+
+    @Override
+    public Num doOperation(Num left, Num right) {
+        return new Num(left.number.doubleValue() / right.number.doubleValue());
     }
 
     @Override

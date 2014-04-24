@@ -1,6 +1,6 @@
 package ru.spbau.turaev.editor.expression;
 
-public class Num implements Exp {
+public class Num extends MonoExpression {
     public final Number number;
 
     public Num(Number number) {

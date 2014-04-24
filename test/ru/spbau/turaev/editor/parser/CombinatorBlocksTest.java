@@ -21,7 +21,7 @@ public class CombinatorBlocksTest extends BaseCombinatorTest {
     }
 
     @Test
-    public void testLetterrPositive() throws Exception {
+    public void testLetterPositive() throws Exception {
         Pair<Character, String> parseResult = getFirst(CombinatorBlocks.letter().parse("ca"));
 
         Assert.assertTrue('c' == parseResult.first);
@@ -71,7 +71,6 @@ public class CombinatorBlocksTest extends BaseCombinatorTest {
         Assert.assertTrue('/' == parseResult.first);
         Assert.assertEquals("a", parseResult.second);
     }
-
 
     @Test
     public void testMulToken() throws Exception {

@@ -1,7 +1,7 @@
 package ru.spbau.turaev.editor.expression;
 
-public class Equality extends BiExp {
-    public Equality(Exp left, Exp right) {
+public class Equality extends BinaryExpression {
+    public Equality(Expression left, Expression right) {
         super(left, right);
     }
 

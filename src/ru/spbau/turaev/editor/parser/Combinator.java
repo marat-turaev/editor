@@ -4,7 +4,7 @@ import ru.spbau.turaev.editor.common.CollectionExtensions;
 import ru.spbau.turaev.editor.expression.*;
 
 public class Combinator {
-    static Parser<Exp> identifier() {
+    static Parser<Expression> identifier() {
         return CombinatorBlocks.letter().bindM(t1 -> CombinatorBlocks.letter().plus(CombinatorBlocks::digit).many().bindM(t2 -> {
             String result = CollectionExtensions.ConvertToString(CollectionExtensions.concat(t1, t2));
             return Parser.returnM(new Identifier(result));
@@ -24,47 +24,47 @@ public class Combinator {
         return CombinatorBlocks.digit().many1().bindM(digits -> Parser.returnM(Integer.parseInt(CollectionExtensions.ConvertToString(digits))));
     }
 
-    static Parser<Exp> expression() {
+    static Parser<Expression> expression() {
         return sum().plus(Combinator::sub).plus(Combinator::term);
     }
 
-    private static Parser<Exp> term() {
+    private static Parser<Expression> term() {
         return div().plus(Combinator::mul).plus(Combinator::primary);
     }
 
-    private static Parser<Exp> primary() {
+    private static Parser<Expression> primary() {
         return num().plus(() -> equality()).plus(() -> identifier()).plus(() -> CombinatorBlocks.parenthesised(expression()));
     }
 
-    static Parser<Exp> floatNum() {
+    static Parser<Expression> floatNum() {
         return floating().bindM(t -> Parser.returnM(new Num(t)));
     }
 
-    static Parser<Exp> integerNum() {
+    static Parser<Expression> integerNum() {
         return integer().bindM(t -> Parser.returnM(new Num(t)));
     }
 
-    static Parser<Exp> num() {
+    static Parser<Expression> num() {
         return floatNum().plus(Combinator::integerNum);
     }
 
-    static Parser<Exp> sum() {
+    static Parser<Expression> sum() {
         return term().bindM(t1 -> CombinatorBlocks.sumToken().seq(expression().bindM(t2 -> Parser.returnM(new Sum(t1, t2)))));
     }
 
-    static Parser<Exp> sub() {
+    static Parser<Expression> sub() {
         return term().bindM(t1 -> CombinatorBlocks.subToken().seq(expression().bindM(t2 -> Parser.returnM(new Sub(t1, t2)))));
     }
 
-    static Parser<Exp> mul() {
+    static Parser<Expression> mul() {
         return primary().bindM(t1 -> CombinatorBlocks.mulToken().seq(term().bindM(t2 -> Parser.returnM(new Mul(t1, t2)))));
     }
 
-    static Parser<Exp> div() {
+    static Parser<Expression> div() {
         return primary().bindM(t1 -> CombinatorBlocks.divToken().seq(term().bindM(t2 -> Parser.returnM(new Div(t1, t2)))));
     }
 
-    public static Parser<Exp> equality() {
+    public static Parser<Expression> equality() {
         return identifier().bindM(t1 -> CombinatorBlocks.equalityToken().seq(expression().bindM(t2 -> Parser.returnM(new Equality(t1, t2)))));
     }
 }

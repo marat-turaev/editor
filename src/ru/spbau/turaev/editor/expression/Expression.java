@@ -1,8 +1,10 @@
 package ru.spbau.turaev.editor.expression;
 
-public interface Exp {
+public interface Expression {
     public void accept(ExpVisitor visitor);
 
     public void traverse(ExpVisitor visitor);
-//        public Iterator<Exp> iterator();
+//        public Iterator<Expression> iterator();
+
+    public Expression simplify();
 }
