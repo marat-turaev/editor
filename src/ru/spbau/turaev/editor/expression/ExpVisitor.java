@@ -11,7 +11,7 @@ public interface ExpVisitor {
 
     void visit(Sub sum);
 
-    void visit(Mul mul);
+    void visit(Multiply multiply);
 
     void visit(Div div);
 }

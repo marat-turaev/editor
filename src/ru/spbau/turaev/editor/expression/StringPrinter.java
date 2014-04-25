@@ -30,7 +30,7 @@ public class StringPrinter implements ExpVisitor {
     }
 
     @Override
-    public void visit(Mul exp) {
+    public void visit(Multiply exp) {
         exp.left.accept(this);
         output.append(" * ");
         exp.right.accept(this);

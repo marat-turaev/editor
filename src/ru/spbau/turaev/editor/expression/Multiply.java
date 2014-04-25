@@ -1,7 +1,7 @@
 package ru.spbau.turaev.editor.expression;
 
-public class Mul extends MathBinaryOperation  {
-    public Mul(Expression left, Expression right) {
+public class Multiply extends MathBinaryOperation  {
+    public Multiply(Expression left, Expression right) {
         super(left, right);
     }
 

@@ -28,7 +28,7 @@ public class PrettyPrinter implements ExpVisitor {
     }
 
     @Override
-    public void visit(Mul exp) {
+    public void visit(Multiply exp) {
         exp.left.accept(this);
         System.out.print(" * ");
         exp.right.accept(this);

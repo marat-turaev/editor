@@ -13,13 +13,13 @@ public class ExpressionTest {
     @Test
     public void canSimplifySimpleMathExpressions() throws Exception {
         Expression expression = new Sum(
-                new Mul(
+                new Multiply(
                         new Sum(new Num(45), new Num(-5)),
                         new Sum(new Num(1), new Num(4))
                 ),
                 new Div(
                         new Sum(new Num(15), new Num(35)),
-                        new Mul(new Num(5), new Num(2))
+                        new Multiply(new Num(5), new Num(2))
                 )
         );
         Expression simplified = expression.simplify();
@@ -32,17 +32,27 @@ public class ExpressionTest {
                 new Equality(
                         new Identifier("x"),
                         new Sum(
-                                new Mul(
+                                new Multiply(
                                         new Sum(new Num(45), new Num(-5)),
                                         new Sum(new Num(1), new Num(4))
                                 ),
                                 new Div(
                                         new Equality(new Identifier("y"), new Num(35)),
-                                        new Mul(new Num(5), new Num(2))
+                                        new Multiply(new Num(5), new Num(2))
                                 )
                         )
                 );
         Expression simplified = expression.simplify();
         Assert.assertEquals("(x = (200.0 + (y = 35) / 10.0))", printExpression(simplified));
+    }
+
+    @Test
+    public void canSimplify() throws Exception {
+        Expression expression = new Sub(
+                new Multiply(new Num(2), new Sum(new Num(3), new Num(2))),
+                new Multiply(new Num(4), new Sum(new Num(3), new Identifier("x")))
+        );
+        Expression simplified = expression.simplify();
+        Assert.assertEquals("(10.0 - 4 * (3 + x))", printExpression(simplified));
     }
 }

@@ -57,7 +57,7 @@ public class Combinator {
     }
 
     static Parser<Expression> mul() {
-        return primary().bindM(t1 -> CombinatorBlocks.mulToken().seq(term().bindM(t2 -> Parser.returnM(new Mul(t1, t2)))));
+        return primary().bindM(t1 -> CombinatorBlocks.mulToken().seq(term().bindM(t2 -> Parser.returnM(new Multiply(t1, t2)))));
     }
 
     static Parser<Expression> div() {

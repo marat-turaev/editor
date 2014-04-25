@@ -22,7 +22,7 @@ public abstract class ExpVisitorAdapter implements ExpVisitor {
     }
 
     @Override
-    public void visit(Mul mul) {
+    public void visit(Multiply multiply) {
     }
 
     @Override
@@ -32,13 +32,13 @@ public abstract class ExpVisitorAdapter implements ExpVisitor {
 
 //    public static void main(String[] args) {
 //        Expression exp = new Sum(
-//                new Mul(
+//                new Multiply(
 //                        new Sum(new Num(10.0), new Num(21.0)),
 //                        new Sum(new Num(22.0), new Num(14.0))
 //                ),
 //                new Div(
 //                        new Sum(new Num(15), new Num(88)),
-//                        //new Mul(new Num(11), new Num(18))
+//                        //new Multiply(new Num(11), new Num(18))
 //                        new Num(0)
 //                )
 //        );
