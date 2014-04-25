@@ -1,6 +1,6 @@
 package ru.spbau.turaev.editor.expression;
 
-public class Identifier extends MonoExpression {
+public class Identifier implements Expression {
     public final String name;
 
     public Identifier(String name) {
@@ -8,8 +8,8 @@ public class Identifier extends MonoExpression {
     }
 
     @Override
-    public void accept(ExpVisitor visitor) {
-        visitor.visit(this);
+    public Expression accept(ExpReworkerVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override

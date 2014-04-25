@@ -22,7 +22,7 @@ public class ExpressionTest {
                         new Multiply(new Num(5), new Num(2))
                 )
         );
-        Expression simplified = expression.simplify();
+        Expression simplified = expression.accept(new Simplifier());
         Assert.assertEquals("205.0", printExpression(simplified));
     }
 
@@ -42,7 +42,7 @@ public class ExpressionTest {
                                 )
                         )
                 );
-        Expression simplified = expression.simplify();
+        Expression simplified = expression.accept(new Simplifier());
         Assert.assertEquals("(x = (200.0 + (y = 35) / 10.0))", printExpression(simplified));
     }
 
@@ -52,7 +52,7 @@ public class ExpressionTest {
                 new Multiply(new Num(2), new Sum(new Num(3), new Num(2))),
                 new Multiply(new Num(4), new Sum(new Num(3), new Identifier("x")))
         );
-        Expression simplified = expression.simplify();
+        Expression simplified = expression.accept(new Simplifier());
         Assert.assertEquals("(10.0 - 4 * (3 + x))", printExpression(simplified));
     }
 }

@@ -7,10 +7,7 @@ public abstract class MathBinaryOperation extends BinaryExpression {
 
     public abstract Num doOperation(Num left, Num right);
 
-    @Override
-    public Expression simplify() {
-        super.simplify();
-
+    public final Expression simplify() {
         if (left instanceof Num && right instanceof Num) {
             return doOperation((Num) left, (Num) right);
         }

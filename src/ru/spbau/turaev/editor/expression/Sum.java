@@ -1,6 +1,6 @@
 package ru.spbau.turaev.editor.expression;
 
-public class Sum extends MathBinaryOperation  {
+public class Sum extends MathBinaryOperation {
     public Sum(Expression left, Expression right) {
         super(left, right);
     }
@@ -11,9 +11,10 @@ public class Sum extends MathBinaryOperation  {
     }
 
     @Override
-    public void accept(ExpVisitor prettyPrinter) {
-        prettyPrinter.visit(this);
+    public Expression accept(ExpReworkerVisitor visitor) {
+        return visitor.visit(this);
     }
+
 
     @Override
     public void traverse(ExpVisitor visitor) {

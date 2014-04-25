@@ -11,8 +11,8 @@ public class Multiply extends MathBinaryOperation  {
     }
 
     @Override
-    public void accept(ExpVisitor prettyPrinter) {
-        prettyPrinter.visit(this);
+    public Expression accept(ExpReworkerVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override

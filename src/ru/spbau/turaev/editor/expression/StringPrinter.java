@@ -1,57 +1,64 @@
 package ru.spbau.turaev.editor.expression;
 
-public class StringPrinter implements ExpVisitor {
+public class StringPrinter implements ExpReworkerVisitor {
     private StringBuilder output = new StringBuilder();
 
     @Override
-    public void visit(Num exp) {
+    public Expression visit(Num exp) {
         output.append(exp.number);
+        return exp;
     }
 
     @Override
-    public void visit(Identifier exp) {
+    public Expression visit(Identifier exp) {
         output.append(exp.name);
+        return exp;
     }
 
     @Override
-    public void visit(Equality exp) {
+    public Expression visit(Equality exp) {
         output.append("(");
         exp.left.accept(this);
         output.append(" = ");
         exp.right.accept(this);
         output.append(")");
+        return exp;
     }
 
     @Override
-    public void visit(Div exp) {
+    public Expression visit(Div exp) {
         exp.left.accept(this);
         output.append(" / ");
         exp.right.accept(this);
+        return exp;
     }
 
     @Override
-    public void visit(Multiply exp) {
+    public Expression visit(Multiply exp) {
         exp.left.accept(this);
         output.append(" * ");
         exp.right.accept(this);
+        return exp;
     }
 
     @Override
-    public void visit(Sum exp) {
+    public Expression visit(Sum exp) {
         output.append("(");
         exp.left.accept(this);
         output.append(" + ");
         exp.right.accept(this);
         output.append(")");
+        return exp;
     }
 
     @Override
-    public void visit(Sub exp) {
+    public Expression visit(Sub exp) {
         output.append("(");
         exp.left.accept(this);
         output.append(" - ");
         exp.right.accept(this);
         output.append(")");
+        return exp;
     }
 
     public String getResult() {

@@ -6,8 +6,8 @@ public class Equality extends BinaryExpression {
     }
 
     @Override
-    public void accept(ExpVisitor visitor) {
-        visitor.visit(this);
+    public Expression accept(ExpReworkerVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override

@@ -8,12 +8,4 @@ abstract class BinaryExpression implements Expression {
         this.left = left;
         this.right = right;
     }
-
-    @Override
-    public Expression simplify() {
-        left = left.simplify();
-        right = right.simplify();
-
-        return this;
-    }
 }
