@@ -22,29 +22,27 @@ public class Simplifier implements ExpressionVisitor {
 
     @Override
     public Expression visit(Sum sum) {
-        sum.left = sum.left.accept(this);
-        sum.right = sum.right.accept(this);
-        return sum.simplify();
+        return visitBinaryExpression(sum);
     }
 
     @Override
     public Expression visit(Sub sub) {
-        sub.left = sub.left.accept(this);
-        sub.right = sub.right.accept(this);
-        return sub.simplify();
+        return visitBinaryExpression(sub);
     }
 
     @Override
     public Expression visit(Multiply multiply) {
-        multiply.left = multiply.left.accept(this);
-        multiply.right = multiply.right.accept(this);
-        return multiply.simplify();
+        return visitBinaryExpression(multiply);
     }
 
     @Override
     public Expression visit(Div div) {
-        div.left = div.left.accept(this);
-        div.right = div.right.accept(this);
-        return div.simplify();
+        return visitBinaryExpression(div);
+    }
+
+    private Expression visitBinaryExpression(MathBinaryOperation binaryExpression) {
+        binaryExpression.left = binaryExpression.left.accept(this);
+        binaryExpression.right = binaryExpression.right.accept(this);
+        return binaryExpression.simplify();
     }
 }

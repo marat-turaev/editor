@@ -1,7 +1,7 @@
 package ru.spbau.turaev.editor.expression.operators;
 
-import ru.spbau.turaev.editor.expression.ExpVisitor;
 import ru.spbau.turaev.editor.expression.ExpressionVisitor;
+import ru.spbau.turaev.editor.expression.ExpVisitor;
 
 public class Div extends MathBinaryOperation {
     public Div(Expression left, Expression right) {

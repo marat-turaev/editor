@@ -55,13 +55,13 @@ public class Printer implements ExpressionVisitor {
     }
 
     @Override
-    public Expression visit(Sub exp) {
+    public Expression visit(Sub sub) {
         output.append("(");
-        exp.left.accept(this);
+        sub.left.accept(this);
         output.append(" - ");
-        exp.right.accept(this);
+        sub.right.accept(this);
         output.append(")");
-        return exp;
+        return sub;
     }
 
     public String getResult() {

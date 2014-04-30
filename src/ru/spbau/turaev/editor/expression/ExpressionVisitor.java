@@ -11,7 +11,7 @@ public interface ExpressionVisitor {
 
     Expression visit(Sum sum);
 
-    Expression visit(Sub sum);
+    Expression visit(Sub sub);
 
     Expression visit(Multiply multiply);
 
