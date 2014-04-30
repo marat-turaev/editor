@@ -1,4 +1,4 @@
-package ru.spbau.turaev.editor.expression;
+package ru.spbau.turaev.editor.expression.operators;
 
 public abstract class MathBinaryOperation extends BinaryExpression {
     protected MathBinaryOperation(Expression left, Expression right) {

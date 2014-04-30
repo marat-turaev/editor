@@ -2,6 +2,7 @@
   <dictionary name="marat">
     <words>
       <w>combinator</w>
+      <w>monad</w>
     </words>
   </dictionary>
 </component>

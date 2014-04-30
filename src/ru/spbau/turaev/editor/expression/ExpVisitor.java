@@ -1,5 +1,7 @@
 package ru.spbau.turaev.editor.expression;
 
+import ru.spbau.turaev.editor.expression.operators.*;
+
 public interface ExpVisitor {
     void visit(Num num);
 

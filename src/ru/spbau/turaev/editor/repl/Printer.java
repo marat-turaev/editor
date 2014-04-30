@@ -1,6 +1,9 @@
-package ru.spbau.turaev.editor.expression;
+package ru.spbau.turaev.editor.repl;
 
-public class StringPrinter implements ExpReworkerVisitor {
+import ru.spbau.turaev.editor.expression.ExpressionVisitor;
+import ru.spbau.turaev.editor.expression.operators.*;
+
+public class Printer implements ExpressionVisitor {
     private StringBuilder output = new StringBuilder();
 
     @Override

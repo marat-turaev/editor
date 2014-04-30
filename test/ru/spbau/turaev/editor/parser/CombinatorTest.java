@@ -3,12 +3,12 @@ package ru.spbau.turaev.editor.parser;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.spbau.turaev.editor.common.Pair;
-import ru.spbau.turaev.editor.expression.Expression;
-import ru.spbau.turaev.editor.expression.StringPrinter;
+import ru.spbau.turaev.editor.expression.operators.Expression;
+import ru.spbau.turaev.editor.repl.Printer;
 
 public class CombinatorTest extends BaseCombinatorTest {
     private String printExpression(Expression expression) {
-        StringPrinter printer = new StringPrinter();
+        Printer printer = new Printer();
         expression.accept(printer);
         return printer.getResult();
     }

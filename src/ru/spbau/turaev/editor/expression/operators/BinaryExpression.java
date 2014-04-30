@@ -1,4 +1,4 @@
-package ru.spbau.turaev.editor.expression;
+package ru.spbau.turaev.editor.expression.operators;
 
 abstract class BinaryExpression implements Expression {
     public Expression left;

@@ -1,6 +1,8 @@
 package ru.spbau.turaev.editor.expression;
 
-public interface ExpReworkerVisitor {
+import ru.spbau.turaev.editor.expression.operators.*;
+
+public interface ExpressionVisitor {
     Expression visit(Num exp);
 
     Expression visit(Identifier identifier);

@@ -1,11 +1,12 @@
-package ru.spbau.turaev.editor.expression;
+package ru.spbau.turaev.editor.repl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import ru.spbau.turaev.editor.expression.operators.*;
 
-public class ExpressionTest {
+public class SimplifierTest {
     private String printExpression(Expression expression) {
-        StringPrinter printer = new StringPrinter();
+        Printer printer = new Printer();
         expression.accept(printer);
         return printer.getResult();
     }

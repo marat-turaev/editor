@@ -1,7 +1,7 @@
 package ru.spbau.turaev.editor.parser;
 
 import ru.spbau.turaev.editor.common.CollectionExtensions;
-import ru.spbau.turaev.editor.expression.*;
+import ru.spbau.turaev.editor.expression.operators.*;
 
 public class Combinator {
     static Parser<Expression> identifier() {
@@ -33,7 +33,7 @@ public class Combinator {
     }
 
     private static Parser<Expression> primary() {
-        return num().plus(() -> equality()).plus(() -> identifier()).plus(() -> CombinatorBlocks.parenthesised(expression()));
+        return num().plus(Combinator::equality).plus(Combinator::identifier).plus(() -> CombinatorBlocks.parenthesised(expression()));
     }
 
     static Parser<Expression> floatNum() {
@@ -65,6 +65,6 @@ public class Combinator {
     }
 
     public static Parser<Expression> equality() {
-        return identifier().bindM(t1 -> CombinatorBlocks.equalityToken().seq(expression().bindM(t2 -> Parser.returnM(new Equality(t1, t2)))));
+        return identifier().bindM(t1 -> CombinatorBlocks.equalityToken().seq(expression().bindM(t2 -> Parser.returnM(new Equality((Identifier) t1, t2)))));
     }
 }

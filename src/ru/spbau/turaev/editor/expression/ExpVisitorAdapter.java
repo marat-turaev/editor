@@ -1,5 +1,7 @@
 package ru.spbau.turaev.editor.expression;
 
+import ru.spbau.turaev.editor.expression.operators.*;
+
 public abstract class ExpVisitorAdapter implements ExpVisitor {
     @Override
     public void visit(Sub sum) {

@@ -1,4 +1,7 @@
-package ru.spbau.turaev.editor.expression;
+package ru.spbau.turaev.editor.expression.operators;
+
+import ru.spbau.turaev.editor.expression.ExpVisitor;
+import ru.spbau.turaev.editor.expression.ExpressionVisitor;
 
 public class Num implements Expression {
     public final Number number;
@@ -8,7 +11,7 @@ public class Num implements Expression {
     }
 
     @Override
-    public Expression accept(ExpReworkerVisitor visitor) {
+    public Expression accept(ExpressionVisitor visitor) {
         return visitor.visit(this);
     }
 

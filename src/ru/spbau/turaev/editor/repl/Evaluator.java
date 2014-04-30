@@ -1,6 +1,15 @@
-package ru.spbau.turaev.editor.expression;
+package ru.spbau.turaev.editor.repl;
 
-public class Simplifier implements ExpReworkerVisitor {
+import ru.spbau.turaev.editor.expression.ExpressionVisitor;
+import ru.spbau.turaev.editor.expression.operators.*;
+
+public class Evaluator implements ExpressionVisitor {
+    private Context context;
+
+    public Evaluator(Context context) {
+        this.context = context;
+    }
+
     @Override
     public Expression visit(Num num) {
         return num;
@@ -8,13 +17,20 @@ public class Simplifier implements ExpReworkerVisitor {
 
     @Override
     public Expression visit(Identifier identifier) {
+        if (context.hasValue(identifier)) {
+            return new Num(context.getValue(identifier));
+        }
         return identifier;
     }
 
     @Override
     public Expression visit(Equality equality) {
-        equality.left = equality.left.accept(this);
         equality.right = equality.right.accept(this);
+        if (equality.right instanceof Num) {
+            Number value = ((Num) equality.right).number;
+            context.setValue(equality.left, value);
+            return equality.right;
+        }
         return equality;
     }
 

@@ -1,4 +1,7 @@
-package ru.spbau.turaev.editor.expression;
+package ru.spbau.turaev.editor.expression.operators;
+
+import ru.spbau.turaev.editor.expression.ExpVisitor;
+import ru.spbau.turaev.editor.expression.ExpressionVisitor;
 
 public class Div extends MathBinaryOperation {
     public Div(Expression left, Expression right) {
@@ -11,7 +14,7 @@ public class Div extends MathBinaryOperation {
     }
 
     @Override
-    public Expression accept(ExpReworkerVisitor visitor) {
+    public Expression accept(ExpressionVisitor visitor) {
         return visitor.visit(this);
     }
 
