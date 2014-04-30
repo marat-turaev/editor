@@ -1,8 +1,12 @@
 package ru.spbau.turaev.editor.expression.operators;
 
-public abstract class MathBinaryOperation extends BinaryExpression {
+public abstract class MathBinaryOperation implements Expression {
+    public Expression left;
+    public Expression right;
+
     protected MathBinaryOperation(Expression left, Expression right) {
-        super(left, right);
+        this.left = left;
+        this.right = right;
     }
 
     public abstract Num doOperation(Num left, Num right);

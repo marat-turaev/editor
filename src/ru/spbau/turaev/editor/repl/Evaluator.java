@@ -1,9 +1,11 @@
 package ru.spbau.turaev.editor.repl;
 
-import ru.spbau.turaev.editor.expression.ExpressionVisitor;
-import ru.spbau.turaev.editor.expression.operators.*;
+import ru.spbau.turaev.editor.expression.operators.Equality;
+import ru.spbau.turaev.editor.expression.operators.Expression;
+import ru.spbau.turaev.editor.expression.operators.Identifier;
+import ru.spbau.turaev.editor.expression.operators.Num;
 
-public class Evaluator implements ExpressionVisitor {
+public class Evaluator extends ReplVisitor {
     private Context context;
 
     public Evaluator(Context context) {
@@ -32,31 +34,5 @@ public class Evaluator implements ExpressionVisitor {
             return equality.right;
         }
         return equality;
-    }
-
-    @Override
-    public Expression visit(Sum sum) {
-        return visitBinaryExpression(sum);
-    }
-
-    @Override
-    public Expression visit(Sub sub) {
-        return visitBinaryExpression(sub);
-    }
-
-    @Override
-    public Expression visit(Multiply multiply) {
-        return visitBinaryExpression(multiply);
-    }
-
-    @Override
-    public Expression visit(Div div) {
-        return visitBinaryExpression(div);
-    }
-
-    private Expression visitBinaryExpression(MathBinaryOperation binaryExpression) {
-        binaryExpression.left = binaryExpression.left.accept(this);
-        binaryExpression.right = binaryExpression.right.accept(this);
-        return binaryExpression.simplify();
     }
 }
