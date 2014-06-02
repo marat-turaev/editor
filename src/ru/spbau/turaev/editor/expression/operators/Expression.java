@@ -1,11 +1,13 @@
 package ru.spbau.turaev.editor.expression.operators;
 
+import ru.spbau.turaev.editor.expression.EvaluatorVisitor;
 import ru.spbau.turaev.editor.expression.ExpressionVisitor;
-import ru.spbau.turaev.editor.expression.ExpVisitor;
+import ru.spbau.turaev.editor.repl.UndefinedVariableException;
 
 public interface Expression {
-    public Expression accept(ExpressionVisitor visitor);
+    public void accept(ExpressionVisitor visitor);
+    public Expression evaluate(EvaluatorVisitor visitor) throws UndefinedVariableException;
 
-    public void traverse(ExpVisitor visitor);
+    public void traverse(ExpressionVisitor visitor);
 //        public Iterator<Expression> iterator();
 }

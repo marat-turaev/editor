@@ -3,17 +3,19 @@ package ru.spbau.turaev.editor.expression;
 import ru.spbau.turaev.editor.expression.operators.*;
 
 public interface ExpressionVisitor {
-    Expression visit(Num exp);
+    void visit(Num num);
 
-    Expression visit(Identifier identifier);
+    void visit(Equality equality);
 
-    Expression visit(Equality equality);
+    void visit(Identifier identifier);
 
-    Expression visit(Sum sum);
+    void visit(Sum sum);
 
-    Expression visit(Sub sub);
+    void visit(Sub sum);
 
-    Expression visit(Multiply multiply);
+    void visit(Multiply multiply);
 
-    Expression visit(Div div);
+    void visit(Div div);
 }
+
+

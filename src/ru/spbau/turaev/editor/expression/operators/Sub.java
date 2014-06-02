@@ -1,7 +1,8 @@
 package ru.spbau.turaev.editor.expression.operators;
 
+import ru.spbau.turaev.editor.expression.EvaluatorVisitor;
 import ru.spbau.turaev.editor.expression.ExpressionVisitor;
-import ru.spbau.turaev.editor.expression.ExpVisitor;
+import ru.spbau.turaev.editor.repl.UndefinedVariableException;
 
 public class Sub extends MathBinaryOperation  {
     public Sub(Expression left, Expression right) {
@@ -14,12 +15,17 @@ public class Sub extends MathBinaryOperation  {
     }
 
     @Override
-    public Expression accept(ExpressionVisitor visitor) {
+    public Expression evaluate(EvaluatorVisitor visitor) throws UndefinedVariableException {
         return visitor.visit(this);
     }
 
     @Override
-    public void traverse(ExpVisitor visitor) {
+    public void accept(ExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void traverse(ExpressionVisitor visitor) {
         left.traverse(visitor);
         visitor.visit(this);
         right.traverse(visitor);

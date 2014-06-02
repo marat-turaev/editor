@@ -15,7 +15,6 @@ public class Combinator {
         return CombinatorBlocks.character('-').seq(natural()).bindM(t1 -> Parser.returnM(-1 * t1)).plus(Combinator::natural);
     }
 
-    //TODO: Convert tint.int to float more efficiently
     static Parser<Double> floating() {
         return integer().bindM(t1 -> CombinatorBlocks.character('.').seq(natural()).bindM(t2 -> Parser.returnM(Double.parseDouble(t1.toString() + "." + t2.toString()))));
     }

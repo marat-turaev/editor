@@ -2,7 +2,7 @@ package ru.spbau.turaev.editor.expression;
 
 import ru.spbau.turaev.editor.expression.operators.*;
 
-public abstract class ExpVisitorAdapter implements ExpVisitor {
+public abstract class ExpVisitorAdapter implements ExpressionVisitor {
     @Override
     public void visit(Sub sum) {
     }
@@ -48,7 +48,7 @@ public abstract class ExpVisitorAdapter implements ExpVisitor {
 //        exp.traverse(new ExpVisitorAdapter() {
 //            @Override
 //            public void visit(Div div) {
-//                div.right.accept(new ExpVisitorAdapter() {
+//                div.right.evaluate(new ExpVisitorAdapter() {
 //                    @Override
 //                    public void visit(Num num) {
 //                        if (num.number.intValue() == 0) {
@@ -59,7 +59,7 @@ public abstract class ExpVisitorAdapter implements ExpVisitor {
 //            }
 //        });
 //
-//        exp.accept(new PrettyPrinter());
+//        exp.evaluate(new PrettyPrinter());
 //
 ////        Iterator<Expression> i = exp.iterator();
 ////        while (i.hasNext()) {

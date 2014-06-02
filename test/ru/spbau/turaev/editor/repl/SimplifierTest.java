@@ -12,7 +12,7 @@ public class SimplifierTest {
     }
 
     @Test
-    public void canSimplifySimpleMathExpressions() throws Exception {
+    public void canSimplifySimpleMathExpressions() throws Exception, UndefinedVariableException {
         Expression expression = new Sum(
                 new Multiply(
                         new Sum(new Num(45), new Num(-5)),
@@ -23,12 +23,12 @@ public class SimplifierTest {
                         new Multiply(new Num(5), new Num(2))
                 )
         );
-        Expression simplified = expression.accept(new Simplifier());
+        Expression simplified = expression.evaluate(new Simplifier(new SimpleContext()));
         Assert.assertEquals("205.0", printExpression(simplified));
     }
 
     @Test
-    public void canSimplifySimpleMathExpressionsWithVariables() throws Exception {
+    public void canSimplifySimpleMathExpressionsWithVariables() throws Exception, UndefinedVariableException {
         Expression expression =
                 new Equality(
                         new Identifier("x"),
@@ -38,22 +38,22 @@ public class SimplifierTest {
                                         new Sum(new Num(1), new Num(4))
                                 ),
                                 new Div(
-                                        new Equality(new Identifier("y"), new Num(35)),
+                                        new Div(new Identifier("y"), new Num(35)),
                                         new Multiply(new Num(5), new Num(2))
                                 )
                         )
                 );
-        Expression simplified = expression.accept(new Simplifier());
-        Assert.assertEquals("(x = (200.0 + (y = 35) / 10.0))", printExpression(simplified));
+        Expression simplified = expression.evaluate(new Simplifier(new SimpleContext()));
+        Assert.assertEquals("(200.0 + y / 35 / 10.0)", printExpression(simplified));
     }
 
     @Test
-    public void canSimplify() throws Exception {
+    public void canSimplify() throws Exception, UndefinedVariableException {
         Expression expression = new Sub(
                 new Multiply(new Num(2), new Sum(new Num(3), new Num(2))),
                 new Multiply(new Num(4), new Sum(new Num(3), new Identifier("x")))
         );
-        Expression simplified = expression.accept(new Simplifier());
+        Expression simplified = expression.evaluate(new Simplifier(new SimpleContext()));
         Assert.assertEquals("(10.0 - 4 * (3 + x))", printExpression(simplified));
     }
 }

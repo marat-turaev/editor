@@ -4,64 +4,63 @@ import ru.spbau.turaev.editor.expression.ExpressionVisitor;
 import ru.spbau.turaev.editor.expression.operators.*;
 
 public class Printer implements ExpressionVisitor {
+    public static String printExpression(Expression expression) {
+        Printer printer = new Printer();
+        expression.accept(printer);
+        return printer.getResult();
+    }
+
     private StringBuilder output = new StringBuilder();
 
     @Override
-    public Expression visit(Num exp) {
+    public void visit(Num exp) {
         output.append(exp.number);
-        return exp;
     }
 
     @Override
-    public Expression visit(Identifier exp) {
+    public void visit(Identifier exp) {
         output.append(exp.name);
-        return exp;
     }
 
     @Override
-    public Expression visit(Equality exp) {
+    public void visit(Equality exp) {
         output.append("(");
         exp.left.accept(this);
         output.append(" = ");
         exp.right.accept(this);
         output.append(")");
-        return exp;
     }
 
     @Override
-    public Expression visit(Div exp) {
+    public void visit(Div exp) {
         exp.left.accept(this);
         output.append(" / ");
         exp.right.accept(this);
-        return exp;
     }
 
     @Override
-    public Expression visit(Multiply exp) {
+    public void visit(Multiply exp) {
         exp.left.accept(this);
         output.append(" * ");
         exp.right.accept(this);
-        return exp;
     }
 
     @Override
-    public Expression visit(Sum exp) {
+    public void visit(Sum exp) {
         output.append("(");
         exp.left.accept(this);
         output.append(" + ");
         exp.right.accept(this);
         output.append(")");
-        return exp;
     }
 
     @Override
-    public Expression visit(Sub sub) {
+    public void visit(Sub sub) {
         output.append("(");
         sub.left.accept(this);
         output.append(" - ");
         sub.right.accept(this);
         output.append(")");
-        return sub;
     }
 
     public String getResult() {

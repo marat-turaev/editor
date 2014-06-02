@@ -1,7 +1,7 @@
 package ru.spbau.turaev.editor.expression.operators;
 
+import ru.spbau.turaev.editor.expression.EvaluatorVisitor;
 import ru.spbau.turaev.editor.expression.ExpressionVisitor;
-import ru.spbau.turaev.editor.expression.ExpVisitor;
 
 public class Num implements Expression {
     public final Number number;
@@ -11,12 +11,34 @@ public class Num implements Expression {
     }
 
     @Override
-    public Expression accept(ExpressionVisitor visitor) {
+    public Expression evaluate(EvaluatorVisitor visitor) {
         return visitor.visit(this);
     }
 
     @Override
-    public void traverse(ExpVisitor visitor) {
+    public void accept(ExpressionVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public void traverse(ExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Num num = (Num) o;
+
+        if (number != null ? !number.equals(num.number) : num.number != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return number != null ? number.hashCode() : 0;
     }
 }

@@ -5,14 +5,8 @@ import org.junit.Test;
 import ru.spbau.turaev.editor.expression.operators.*;
 
 public class EvaluatorTest {
-    private String printExpression(Expression expression) {
-        Printer printer = new Printer();
-        expression.accept(printer);
-        return printer.getResult();
-    }
-
     @Test
-    public void canEvaluateSimpleMathExpressions() throws Exception {
+    public void canEvaluateSimpleMathExpressions() throws Exception, UndefinedVariableException {
         Expression expression = new Sum(
                 new Multiply(
                         new Sum(new Num(45), new Num(-5)),
@@ -25,12 +19,12 @@ public class EvaluatorTest {
         );
 
         SimpleContext simpleContext = new SimpleContext();
-        Expression simplified = expression.accept(new Evaluator(simpleContext));
-        Assert.assertEquals("205.0", printExpression(simplified));
+        Expression simplified = expression.evaluate(new Evaluator(simpleContext));
+        Assert.assertEquals("205.0", Printer.printExpression(simplified));
     }
 
     @Test
-    public void canEvaluateMathExpressionsWithVariables() throws Exception {
+    public void canEvaluateMathExpressionsWithVariables() throws Exception, UndefinedVariableException {
         Expression expression =
                 new Equality(
                         new Identifier("x"),
@@ -47,14 +41,15 @@ public class EvaluatorTest {
                 );
 
         SimpleContext context = new SimpleContext();
-        Expression simplified = expression.accept(new Evaluator(context));
-        Assert.assertEquals("203.5", printExpression(simplified));
-        Assert.assertEquals(35, context.getValue(new Identifier("y")));
-        Assert.assertEquals(203.5, context.getValue(new Identifier("x")));
+        Expression simplified = expression.evaluate(new Evaluator(context));
+        Assert.assertEquals("203.5", Printer.printExpression(simplified));
+        Assert.assertEquals(new Num(35), context.getValue(new Identifier("y")));
+        Assert.assertEquals(new Num(203.5), context.getValue(new Identifier("x")));
     }
 
-    @Test
-    public void canEvaluateMathExpressionsWithUndefinedVariables() throws Exception {
+    @Test(expected = UndefinedVariableException.class)
+    public void canEvaluateMathExpressionsWithUndefinedVariables() throws Exception, UndefinedVariableException {
+        // x = y + 1
         Expression expression =
                 new Equality(
                         new Identifier("x"),
@@ -64,23 +59,21 @@ public class EvaluatorTest {
                         )
                 );
 
-        SimpleContext context = new SimpleContext();
-        Expression simplified = expression.accept(new Evaluator(context));
-        Assert.assertEquals("(x = (y + 1))", printExpression(simplified));
-        Assert.assertFalse(context.hasValue(new Identifier("y")));
-        Assert.assertFalse(context.hasValue(new Identifier("x")));
+        expression.evaluate(new Evaluator(new SimpleContext()));
     }
 
     @Test
-    public void canEvaluateMultipleExpressions() {
+    public void canEvaluateMultipleExpressions() throws UndefinedVariableException {
         SimpleContext context = new SimpleContext();
 
+        // x = 1
         Expression expression1 = new Equality(new Identifier("x"), new Num(1));
-        Expression simplified = expression1.accept(new Evaluator(context));
+        Expression simplified = expression1.evaluate(new Evaluator(context));
 
-        Assert.assertEquals("1", printExpression(simplified));
-        Assert.assertEquals(1, context.getValue(new Identifier("x")));
+        Assert.assertEquals("1", Printer.printExpression(simplified));
+        Assert.assertEquals(new Num(1), context.getValue(new Identifier("x")));
 
+        // x = x + 1
         Expression expression2 = new Equality(
                 new Identifier("x"),
                 new Sum(
@@ -88,9 +81,9 @@ public class EvaluatorTest {
                         new Num(1)
                 )
         );
-        simplified = expression2.accept(new Evaluator(context));
+        simplified = expression2.evaluate(new Evaluator(context));
 
-        Assert.assertEquals("2.0", printExpression(simplified));
-        Assert.assertEquals(2.0, context.getValue(new Identifier("x")));
+        Assert.assertEquals("2.0", Printer.printExpression(simplified));
+        Assert.assertEquals(new Num(2.0), context.getValue(new Identifier("x")));
     }
 }
