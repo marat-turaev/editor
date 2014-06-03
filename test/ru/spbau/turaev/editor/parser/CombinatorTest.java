@@ -50,7 +50,7 @@ public class CombinatorTest extends BaseCombinatorTest {
         Pair<Expression, String> parseResult = getFirst(Combinator.expression().parse("y = 1 + 2 * (-3 / y) + 3 + x = 3 - 2 test"));
 
         Assert.assertEquals("(y = (1 + (2 * -3 / y + (3 + (x = (3 - 2))))))", printExpression(parseResult.first));
-        Assert.assertEquals(" test", parseResult.second);
+        Assert.assertEquals("test", parseResult.second);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class CombinatorTest extends BaseCombinatorTest {
         Pair<Expression, String> parseResult = getFirst(Combinator.sum().parse("1   +   1 test"));
 
         Assert.assertEquals("(1 + 1)", printExpression(parseResult.first));
-        Assert.assertEquals(" test", parseResult.second);
+        Assert.assertEquals("test", parseResult.second);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class CombinatorTest extends BaseCombinatorTest {
         Pair<Expression, String> parseResult = getFirst(Combinator.sub().parse("1  -   1 test"));
 
         Assert.assertEquals("(1 - 1)", printExpression(parseResult.first));
-        Assert.assertEquals(" test", parseResult.second);
+        Assert.assertEquals("test", parseResult.second);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class CombinatorTest extends BaseCombinatorTest {
         Pair<Expression, String> parseResult = getFirst(Combinator.mul().parse("1  * 1 test"));
 
         Assert.assertEquals("1 * 1", printExpression(parseResult.first));
-        Assert.assertEquals(" test", parseResult.second);
+        Assert.assertEquals("test", parseResult.second);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class CombinatorTest extends BaseCombinatorTest {
         Pair<Expression, String> parseResult = getFirst(Combinator.div().parse("1  /    1 test"));
 
         Assert.assertEquals("1 / 1", printExpression(parseResult.first));
-        Assert.assertEquals(" test", parseResult.second);
+        Assert.assertEquals("test", parseResult.second);
     }
 
     @Test
@@ -119,6 +119,6 @@ public class CombinatorTest extends BaseCombinatorTest {
         Pair<Expression, String> parseResult = getFirst(Combinator.equality().parse("x = 1 + 1 test"));
 
         Assert.assertEquals("(x = (1 + 1))", printExpression(parseResult.first));
-        Assert.assertEquals(" test", parseResult.second);
+        Assert.assertEquals("test", parseResult.second);
     }
 }
