@@ -10,11 +10,11 @@ public interface EvaluatorVisitor {
 
     Expression visit(Equality equality) throws UndefinedVariableException;
 
-    Expression visit(Sum sum) throws UndefinedVariableException;
+    Expression visit(Addition addition) throws UndefinedVariableException;
 
-    Expression visit(Sub sub) throws UndefinedVariableException;
+    Expression visit(Subtraction subtraction) throws UndefinedVariableException;
 
-    Expression visit(Multiply multiply) throws UndefinedVariableException;
+    Expression visit(Multiplication multiplication) throws UndefinedVariableException;
 
-    Expression visit(Div div) throws UndefinedVariableException;
+    Expression visit(Division division) throws UndefinedVariableException;
 }

@@ -3,18 +3,20 @@ package ru.spbau.turaev.editor.repl;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.spbau.turaev.editor.expression.operators.*;
+import ru.spbau.turaev.editor.repl.visitors.Evaluator;
+import ru.spbau.turaev.editor.repl.visitors.Printer;
 
 public class EvaluatorTest {
     @Test
     public void canEvaluateSimpleMathExpressions() throws Exception, UndefinedVariableException {
-        Expression expression = new Sum(
-                new Multiply(
-                        new Sum(new Num(45), new Num(-5)),
-                        new Sum(new Num(1), new Num(4))
+        Expression expression = new Addition(
+                new Multiplication(
+                        new Addition(new Num(45), new Num(-5)),
+                        new Addition(new Num(1), new Num(4))
                 ),
-                new Div(
-                        new Sum(new Num(15), new Num(35)),
-                        new Multiply(new Num(5), new Num(2))
+                new Division(
+                        new Addition(new Num(15), new Num(35)),
+                        new Multiplication(new Num(5), new Num(2))
                 )
         );
 
@@ -28,14 +30,14 @@ public class EvaluatorTest {
         Expression expression =
                 new Equality(
                         new Identifier("x"),
-                        new Sum(
-                                new Multiply(
-                                        new Sum(new Num(45), new Num(-5)),
-                                        new Sum(new Num(1), new Num(4))
+                        new Addition(
+                                new Multiplication(
+                                        new Addition(new Num(45), new Num(-5)),
+                                        new Addition(new Num(1), new Num(4))
                                 ),
-                                new Div(
+                                new Division(
                                         new Equality(new Identifier("y"), new Num(35)),
-                                        new Multiply(new Num(5), new Num(2))
+                                        new Multiplication(new Num(5), new Num(2))
                                 )
                         )
                 );
@@ -53,7 +55,7 @@ public class EvaluatorTest {
         Expression expression =
                 new Equality(
                         new Identifier("x"),
-                        new Sum(
+                        new Addition(
                                 new Identifier("y"),
                                 new Num(1)
                         )
@@ -76,7 +78,7 @@ public class EvaluatorTest {
         // x = x + 1
         Expression expression2 = new Equality(
                 new Identifier("x"),
-                new Sum(
+                new Addition(
                         new Identifier("x"),
                         new Num(1)
                 )

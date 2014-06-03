@@ -4,7 +4,7 @@ import ru.spbau.turaev.editor.expression.operators.*;
 
 public abstract class ExpVisitorAdapter implements ExpressionVisitor {
     @Override
-    public void visit(Sub sum) {
+    public void visit(Subtraction sum) {
     }
 
     @Override
@@ -20,15 +20,15 @@ public abstract class ExpVisitorAdapter implements ExpressionVisitor {
     }
 
     @Override
-    public void visit(Sum sum) {
+    public void visit(Addition addition) {
     }
 
     @Override
-    public void visit(Multiply multiply) {
+    public void visit(Multiplication multiplication) {
     }
 
     @Override
-    public void visit(Div div) {
+    public void visit(Division division) {
     }
 }
 

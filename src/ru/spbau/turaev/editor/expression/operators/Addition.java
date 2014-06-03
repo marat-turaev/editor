@@ -4,8 +4,8 @@ import ru.spbau.turaev.editor.expression.EvaluatorVisitor;
 import ru.spbau.turaev.editor.expression.ExpressionVisitor;
 import ru.spbau.turaev.editor.repl.UndefinedVariableException;
 
-public class Sum extends MathBinaryOperation {
-    public Sum(Expression left, Expression right) {
+public class Addition extends MathBinaryOperation {
+    public Addition(Expression left, Expression right) {
         super(left, right);
     }
 

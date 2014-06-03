@@ -1,10 +1,13 @@
-package ru.spbau.turaev.editor.repl;
+package ru.spbau.turaev.editor.repl.visitors;
 
 import ru.spbau.turaev.editor.expression.ExpressionVisitor;
 import ru.spbau.turaev.editor.expression.operators.*;
 
 public class Printer implements ExpressionVisitor {
     public static String printExpression(Expression expression) {
+        if (expression == null) {
+            return "";
+        }
         Printer printer = new Printer();
         expression.accept(printer);
         return printer.getResult();
@@ -32,21 +35,21 @@ public class Printer implements ExpressionVisitor {
     }
 
     @Override
-    public void visit(Div exp) {
+    public void visit(Division exp) {
         exp.left.accept(this);
         output.append(" / ");
         exp.right.accept(this);
     }
 
     @Override
-    public void visit(Multiply exp) {
+    public void visit(Multiplication exp) {
         exp.left.accept(this);
         output.append(" * ");
         exp.right.accept(this);
     }
 
     @Override
-    public void visit(Sum exp) {
+    public void visit(Addition exp) {
         output.append("(");
         exp.left.accept(this);
         output.append(" + ");
@@ -55,11 +58,11 @@ public class Printer implements ExpressionVisitor {
     }
 
     @Override
-    public void visit(Sub sub) {
+    public void visit(Subtraction subtraction) {
         output.append("(");
-        sub.left.accept(this);
+        subtraction.left.accept(this);
         output.append(" - ");
-        sub.right.accept(this);
+        subtraction.right.accept(this);
         output.append(")");
     }
 

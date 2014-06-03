@@ -28,7 +28,7 @@ public class Combinator {
     }
 
     private static Parser<Expression> term() {
-        return div().plus(Combinator::mul).plus(Combinator::primary);
+        return div().plus(Combinator::mul).plus(() -> CombinatorBlocks.spaced(primary()));
     }
 
     private static Parser<Expression> primary() {
@@ -48,19 +48,19 @@ public class Combinator {
     }
 
     static Parser<Expression> sum() {
-        return term().bindM(t1 -> CombinatorBlocks.sumToken().seq(expression().bindM(t2 -> Parser.returnM(new Sum(t1, t2)))));
+        return term().bindM(t1 -> CombinatorBlocks.sumToken().seq(expression().bindM(t2 -> Parser.returnM(new Addition(t1, t2)))));
     }
 
     static Parser<Expression> sub() {
-        return term().bindM(t1 -> CombinatorBlocks.subToken().seq(expression().bindM(t2 -> Parser.returnM(new Sub(t1, t2)))));
+        return term().bindM(t1 -> CombinatorBlocks.subToken().seq(expression().bindM(t2 -> Parser.returnM(new Subtraction(t1, t2)))));
     }
 
     static Parser<Expression> mul() {
-        return primary().bindM(t1 -> CombinatorBlocks.mulToken().seq(term().bindM(t2 -> Parser.returnM(new Multiply(t1, t2)))));
+        return primary().bindM(t1 -> CombinatorBlocks.mulToken().seq(term().bindM(t2 -> Parser.returnM(new Multiplication(t1, t2)))));
     }
 
     static Parser<Expression> div() {
-        return primary().bindM(t1 -> CombinatorBlocks.divToken().seq(term().bindM(t2 -> Parser.returnM(new Div(t1, t2)))));
+        return primary().bindM(t1 -> CombinatorBlocks.divToken().seq(term().bindM(t2 -> Parser.returnM(new Division(t1, t2)))));
     }
 
     public static Parser<Expression> equality() {

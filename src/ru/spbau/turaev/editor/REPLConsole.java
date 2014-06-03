@@ -1,29 +1,42 @@
 package ru.spbau.turaev.editor;
 
+import ru.spbau.turaev.editor.actions.AllowInputOnlyToLastLineFilter;
+import ru.spbau.turaev.editor.actions.UserInputProcessor;
+import ru.spbau.turaev.editor.actions.Utilities;
 import ru.spbau.turaev.editor.expression.operators.Expression;
 import ru.spbau.turaev.editor.parser.ParserFacade;
-import ru.spbau.turaev.editor.repl.*;
+import ru.spbau.turaev.editor.parser.ParsingException;
+import ru.spbau.turaev.editor.repl.visitors.Colorizer;
+import ru.spbau.turaev.editor.repl.visitors.Printer;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-
 public class REPLConsole {
-    private JFrame frame;
     public static final String SIMPLIFY = "Simplify";
     public static final String EVALUATE = "Evaluate";
     public static final String GREETING = System.lineSeparator() + ">";
 
-    private Context context = new SimpleContext();
-    private Evaluator evaluator = new Evaluator(context);
-    private Simplifier simplifier = new Simplifier(context);
+    private UserInputProcessor userInputProcessor;
+    private UndoableEditListener undoableEditListener;
+
+    public static void main(String[] args) {
+        REPLConsole replConsole = new REPLConsole();
+        replConsole.init();
+    }
 
     private void init() {
-        frame = new JFrame();
+
+        undoableEditListener = e -> userInputProcessor.saveUndoableEdit(e.getEdit());
+
+        JFrame frame = new JFrame();
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -35,102 +48,176 @@ public class REPLConsole {
         final JComboBox<String> optionPane = new JComboBox<>();
         optionPane.addItem(SIMPLIFY);
         optionPane.addItem(EVALUATE);
+        optionPane.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                userInputProcessor.setMode(SIMPLIFY.equals(optionPane.getSelectedItem()));
+            }
+        });
         frame.add(optionPane, "North");
 
-        JEditorPane textArea = new JEditorPane();
-        AbstractDocument document = (AbstractDocument) textArea.getDocument();
-        document.setDocumentFilter(new Filter());
-        textArea.setText("Welcome to REPL Console! " + GREETING);
+        StyledDocument styledDocument = new DefaultStyledDocument();
+        Style base = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+
+        Style def = styledDocument.addStyle("default", base);
+        StyleConstants.setForeground(def, Color.BLACK);
+
+        Style operand = styledDocument.addStyle("operand", base);
+        StyleConstants.setForeground(operand, Color.GREEN);
+        StyleConstants.setBold(operand, true);
+
+        Style error = styledDocument.addStyle("error", base);
+        StyleConstants.setForeground(error, Color.RED);
+        StyleConstants.setBold(error, true);
+
+        Style parseError = styledDocument.addStyle("parseError", base);
+        StyleConstants.setBackground(parseError, Color.RED);
+
+        JTextPane textArea = new JTextPane(styledDocument);
+
+        textArea.setText("Welcome to REPL Console! " + System.lineSeparator() + ">");
         textArea.setEditable(true);
         frame.add(textArea, "Center");
 
-        textArea.getKeymap().addActionForKeyStroke(KeyStroke.getKeyStroke("ENTER"), new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JEditorPane source = (JEditorPane) e.getSource();
-                Document document = source.getDocument();
-                try {
-                    String text = document.getText(0, document.getLength());
-                    String userInput = text.substring(lastLineIndex(document) + GREETING.length());
+        userInputProcessor = new UserInputProcessor();
+        optionPane.setSelectedIndex(0);
 
-                    Expression parsedExpression = ParserFacade.parseExpression(userInput);
-                    String unparsed = ParserFacade.unparsed;
+        AbstractDocument document = (AbstractDocument) textArea.getDocument();
+        // ----------- add listeners ----------
+        document.setDocumentFilter(new AllowInputOnlyToLastLineFilter());
+        document.addUndoableEditListener(undoableEditListener);
+        document.addDocumentListener(new Coloring(textArea));
 
-                    String result = "Result is: " + System.lineSeparator();
-                    result += "Parsed: " + Printer.printExpression(parsedExpression) + System.lineSeparator();
-                    result += "Unparsed: " + unparsed + System.lineSeparator();
-                    result += "Simplified: " + Printer.printExpression(parsedExpression.evaluate(simplifier)) + System.lineSeparator();
-                    result += "Evaluated: " + Printer.printExpression(parsedExpression.evaluate(evaluator)) + System.lineSeparator();
+        textArea.getKeymap().addActionForKeyStroke(KeyStroke.getKeyStroke("ENTER"), new EvaluateAction());
+        textArea.getKeymap().addActionForKeyStroke(KeyStroke.getKeyStroke("control shift Z"), new UndoEvaluationAction());
 
-                    document.insertString(endOffset(document), System.lineSeparator() + result, null);
-                    document.insertString(endOffset(document), GREETING, null);
-                    source.setCaretPosition(endOffset(document));
-                } catch (BadLocationException e1) {
-                    e1.printStackTrace();
-                } catch (UndefinedVariableException e1) {
-                    e1.printStackTrace();
+        textArea.getKeymap().addActionForKeyStroke(
+                KeyStroke.getKeyStroke("control Z"),
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        userInputProcessor.undoEdit();
+                    }
                 }
-            }
-
-            private int endOffset(Document document) {
-                return document.getEndPosition().getOffset() - 1;
-            }
-
-            public boolean simplifyMode() {
-                return SIMPLIFY.equals(optionPane.getSelectedItem());
-            }
-        });
+        );
 
         frame.setVisible(true);
-        frame.setSize(500, 300);
+        frame.setSize(400, 1200);
     }
 
+    private abstract class PrintToConsoleAction extends AbstractAction {
+        protected Document document;
 
-    public static void main(String[] args) {
-        REPLConsole replConsole = new REPLConsole();
-        replConsole.init();
-    }
+        protected abstract String getStringToPrint() throws BadLocationException;
 
-
-    private class Filter extends DocumentFilter {
         @Override
-        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-            if (cursorOnLastLine(offset, fb)) {
-                super.insertString(fb, offset, string, attr);
+        public void actionPerformed(ActionEvent e) {
+            JEditorPane source = (JEditorPane) e.getSource();
+            document = source.getDocument();
+            try {
+                document.removeUndoableEditListener(undoableEditListener);
+
+                String result = getStringToPrint();
+                if (result != null) {
+                    document.insertString(Utilities.endOffset(document), System.lineSeparator() + result, null);
+                    document.insertString(Utilities.endOffset(document), GREETING, null);
+                    source.setCaretPosition(Utilities.endOffset(document));
+                }
+            } catch (BadLocationException e1) {
+                e1.printStackTrace();
+            } finally {
+                document.addUndoableEditListener(undoableEditListener);
             }
         }
+    }
 
-        public void remove(final FilterBypass fb, final int offset, final int length) throws BadLocationException {
-            if (offset > lastLineIndex(fb.getDocument()) + 1) {
-                super.remove(fb, offset, length);
+    private class Coloring implements DocumentListener {
+        private JTextPane textArea;
+
+        public Coloring(JTextPane textArea) {
+            this.textArea = textArea;
+        }
+
+        public void insertUpdate(DocumentEvent e) {
+            process(e);
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            process(e);
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+        }
+
+        public void process(DocumentEvent e) {
+            final StyledDocument document = (StyledDocument) e.getDocument();
+            try {
+                String text = document.getText(0, document.getLength());
+                boolean isUserInput = '>' == text.charAt(Utilities.lastLineIndex(document) + 1);
+                int begin = Utilities.lastLineIndex(document) + GREETING.length();
+                final String userInput = text.substring(begin);
+                if (!isUserInput || userInput.isEmpty()) {
+                    return;
+                }
+                try {
+                    Expression exp = ParserFacade.parseExpression(userInput);
+                    String unparsed = ParserFacade.unparsed;
+                    SwingUtilities.invokeLater(() -> {
+                        document.removeUndoableEditListener(undoableEditListener);
+                        document.removeDocumentListener(this);
+                        try {
+                            document.remove(begin, userInput.length());
+                            document.insertString(Utilities.endOffset(document), Printer.printExpression(exp) + unparsed, null);
+                            textArea.setCaretPosition(Utilities.endOffset(document));
+                        } catch (BadLocationException e1) {
+                            e1.printStackTrace();
+                        }
+                        document.addDocumentListener(this);
+                        document.addUndoableEditListener(undoableEditListener);
+                    });
+
+                    if (!unparsed.equals("")) {
+                        throw new ParsingException(unparsed);
+                    }
+
+                    Colorizer c = new Colorizer(userInputProcessor.getContext(), userInputProcessor.isSimplifyMode());
+                    exp.accept(c);
+                    SwingUtilities.invokeLater(() -> {
+                        document.removeUndoableEditListener(undoableEditListener);
+                        document.setCharacterAttributes(begin, userInput.length(), document.getStyle("default"), true);
+                        for (Colorizer.Segment segment : c.getSegments()) {
+                            document.setCharacterAttributes(begin + segment.getBegin(), segment.length(), document.getStyle(segment.getStyle()), true);
+                        }
+                        document.addUndoableEditListener(undoableEditListener);
+                    });
+
+                } catch (ParsingException e1) {
+                    SwingUtilities.invokeLater(() -> {
+                        document.removeUndoableEditListener(undoableEditListener);
+                        document.setCharacterAttributes(begin + userInput.length() - e1.unparsed.length(), e1.unparsed.length(), document.getStyle("parseError"), true);
+                        document.addUndoableEditListener(undoableEditListener);
+                    });
+                }
+            } catch (BadLocationException ignored) {
             }
         }
+    }
 
-        public void replace(final FilterBypass fb, final int offset, final int length, final String text, final AttributeSet attrs)
-                throws BadLocationException {
-            if (cursorOnLastLine(offset, fb)) {
-                super.replace(fb, offset, length, text, attrs);
-            }
+    public class UndoEvaluationAction extends PrintToConsoleAction {
+        @Override
+        protected String getStringToPrint() throws BadLocationException {
+            return userInputProcessor.undoEvaluation();
         }
-
     }
 
-    private static boolean cursorOnLastLine(int offset, DocumentFilter.FilterBypass fb) {
-        return cursorOnLastLine(offset, fb.getDocument());
-    }
-
-    private static boolean cursorOnLastLine(int offset, Document document) {
-        int lastLineIndex = 0;
-        try {
-            lastLineIndex = lastLineIndex(document);
-        } catch (BadLocationException e) {
-            return false;
+    public class EvaluateAction extends PrintToConsoleAction {
+        @Override
+        protected String getStringToPrint() throws BadLocationException {
+            String userInput = document.getText(0, document.getLength()).substring(Utilities.lastLineIndex(document) + GREETING.length());
+            if (userInput.isEmpty())
+                return null;
+            return userInputProcessor.parseAndEvaluate(userInput);
         }
-        return offset > lastLineIndex;
     }
-
-    private static int lastLineIndex(Document document) throws BadLocationException {
-        return document.getText(0, document.getLength()).lastIndexOf(System.lineSeparator());
-    }
-
 }
+

@@ -1,7 +1,9 @@
-package ru.spbau.turaev.editor.repl;
+package ru.spbau.turaev.editor.repl.visitors;
 
 import ru.spbau.turaev.editor.expression.EvaluatorVisitor;
 import ru.spbau.turaev.editor.expression.operators.*;
+import ru.spbau.turaev.editor.repl.Context;
+import ru.spbau.turaev.editor.repl.UndefinedVariableException;
 
 public abstract class ReplVisitor implements EvaluatorVisitor {
     protected Context context;
@@ -19,23 +21,23 @@ public abstract class ReplVisitor implements EvaluatorVisitor {
     }
 
     @Override
-    public Expression visit(Sum sum) throws UndefinedVariableException {
-        return visitBinaryExpression(sum);
+    public Expression visit(Addition addition) throws UndefinedVariableException {
+        return visitBinaryExpression(addition);
     }
 
     @Override
-    public Expression visit(Sub sub) throws UndefinedVariableException {
-        return visitBinaryExpression(sub);
+    public Expression visit(Subtraction subtraction) throws UndefinedVariableException {
+        return visitBinaryExpression(subtraction);
     }
 
     @Override
-    public Expression visit(Multiply multiply) throws UndefinedVariableException {
-        return visitBinaryExpression(multiply);
+    public Expression visit(Multiplication multiplication) throws UndefinedVariableException {
+        return visitBinaryExpression(multiplication);
     }
 
     @Override
-    public Expression visit(Div div) throws UndefinedVariableException {
-        return visitBinaryExpression(div);
+    public Expression visit(Division division) throws UndefinedVariableException {
+        return visitBinaryExpression(division);
     }
 
     @Override

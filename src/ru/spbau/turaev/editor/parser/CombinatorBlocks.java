@@ -47,7 +47,7 @@ public class CombinatorBlocks {
         return satisfy(Character::isWhitespace);
     }
 
-    private static <T> Parser<T> spaced(Parser<T> parser) {
+    static <T> Parser<T> spaced(Parser<T> parser) {
         return ignoreSurrounded(trivia().many(), parser, trivia().many());
     }
 

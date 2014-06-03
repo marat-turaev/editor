@@ -9,13 +9,13 @@ public interface ExpressionVisitor {
 
     void visit(Identifier identifier);
 
-    void visit(Sum sum);
+    void visit(Addition addition);
 
-    void visit(Sub sum);
+    void visit(Subtraction sum);
 
-    void visit(Multiply multiply);
+    void visit(Multiplication multiplication);
 
-    void visit(Div div);
+    void visit(Division division);
 }
 
 

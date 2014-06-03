@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.spbau.turaev.editor.common.Pair;
 import ru.spbau.turaev.editor.expression.operators.Expression;
-import ru.spbau.turaev.editor.repl.Printer;
+import ru.spbau.turaev.editor.repl.visitors.Printer;
 
 public class CombinatorTest extends BaseCombinatorTest {
     private String printExpression(Expression expression) {
