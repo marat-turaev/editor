@@ -6,8 +6,6 @@ import ru.spbau.turaev.editor.repl.UndefinedVariableException;
 
 public interface Expression {
     public void accept(ExpressionVisitor visitor);
-    public Expression evaluate(EvaluatorVisitor visitor) throws UndefinedVariableException;
 
-    public void traverse(ExpressionVisitor visitor);
-//        public Iterator<Expression> iterator();
+    public Expression evaluate(EvaluatorVisitor visitor) throws UndefinedVariableException;
 }

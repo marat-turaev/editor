@@ -21,8 +21,4 @@ public class Identifier implements Expression {
         visitor.visit(this);
     }
 
-    @Override
-    public void traverse(ExpressionVisitor visitor) {
-        visitor.visit(this);
-    }
 }

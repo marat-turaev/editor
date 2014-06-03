@@ -24,10 +24,4 @@ public class Addition extends MathBinaryOperation {
         visitor.visit(this);
     }
 
-    @Override
-    public void traverse(ExpressionVisitor visitor) {
-        left.traverse(visitor);
-        visitor.visit(this);
-        right.traverse(visitor);
-    }
 }

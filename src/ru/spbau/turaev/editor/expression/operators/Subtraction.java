@@ -4,7 +4,7 @@ import ru.spbau.turaev.editor.expression.EvaluatorVisitor;
 import ru.spbau.turaev.editor.expression.ExpressionVisitor;
 import ru.spbau.turaev.editor.repl.UndefinedVariableException;
 
-public class Subtraction extends MathBinaryOperation  {
+public class Subtraction extends MathBinaryOperation {
     public Subtraction(Expression left, Expression right) {
         super(left, right);
     }
@@ -24,10 +24,4 @@ public class Subtraction extends MathBinaryOperation  {
         visitor.visit(this);
     }
 
-    @Override
-    public void traverse(ExpressionVisitor visitor) {
-        left.traverse(visitor);
-        visitor.visit(this);
-        right.traverse(visitor);
-    }
 }
