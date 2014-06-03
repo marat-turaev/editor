@@ -25,4 +25,14 @@ public class SimpleContext implements Context {
         }
         return null;
     }
+
+    public SimpleContext copy() {
+        SimpleContext newContext = new SimpleContext();
+        for (String key : values.keySet()) {
+            newContext.values.put(key, values.get(key));
+        }
+        return newContext;
+    }
 }
+
+

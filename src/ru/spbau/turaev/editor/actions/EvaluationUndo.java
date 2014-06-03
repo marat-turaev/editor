@@ -2,13 +2,13 @@ package ru.spbau.turaev.editor.actions;
 
 import ru.spbau.turaev.editor.repl.Context;
 
-public class EvaluationAction {
+public class EvaluationUndo {
     private final String lastResult;
     private final Context context;
 
-    public EvaluationAction(String userInput, Context context) {
+    public EvaluationUndo(String userInput, Context context) {
         this.lastResult = userInput;
-        this.context = context;
+        this.context = context.copy();
     }
 
     public String getLastResult() {

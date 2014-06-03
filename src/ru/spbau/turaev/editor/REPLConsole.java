@@ -33,9 +33,7 @@ public class REPLConsole {
     }
 
     private void init() {
-
         undoableEditListener = e -> userInputProcessor.saveUndoableEdit(e.getEdit());
-
         JFrame frame = new JFrame();
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -161,6 +159,7 @@ public class REPLConsole {
                 }
                 try {
                     Expression exp = ParserFacade.parseExpression(userInput);
+
                     String unparsed = ParserFacade.unparsed;
                     SwingUtilities.invokeLater(() -> {
                         document.removeUndoableEditListener(undoableEditListener);
@@ -176,10 +175,6 @@ public class REPLConsole {
                         document.addUndoableEditListener(undoableEditListener);
                     });
 
-                    if (!unparsed.equals("")) {
-                        throw new ParsingException(unparsed);
-                    }
-
                     Colorizer c = new Colorizer(userInputProcessor.getContext(), userInputProcessor.isSimplifyMode());
                     exp.accept(c);
                     SwingUtilities.invokeLater(() -> {
@@ -190,6 +185,10 @@ public class REPLConsole {
                         }
                         document.addUndoableEditListener(undoableEditListener);
                     });
+
+                    if (!unparsed.equals("")) {
+                        throw new ParsingException(unparsed);
+                    }
 
                 } catch (ParsingException e1) {
                     SwingUtilities.invokeLater(() -> {

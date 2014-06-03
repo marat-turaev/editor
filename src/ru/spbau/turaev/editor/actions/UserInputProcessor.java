@@ -15,12 +15,10 @@ import java.util.Stack;
 
 public class UserInputProcessor {
     private final Stack<UndoableEdit> edits = new Stack<>();
-    private final Stack<EvaluationAction> evaluations = new Stack<>();
+    private final Stack<EvaluationUndo> evaluations = new Stack<>();
 
     private boolean simplifyMode;
     private Context context = new SimpleContext();
-    private Simplifier simplifier = new Simplifier(context);
-    private Evaluator evaluator = new Evaluator(context);
 
     private String lastResult = null;
 
@@ -38,7 +36,7 @@ public class UserInputProcessor {
 
     public String parseAndEvaluate(String userInput) {
         edits.clear();
-        evaluations.push(new EvaluationAction(lastResult, context));
+        evaluations.push(new EvaluationUndo(lastResult, context));
         String result;
         try {
             Expression expression = ParserFacade.parseExpression(userInput);
@@ -47,9 +45,9 @@ public class UserInputProcessor {
                 throw new ParsingException(unparsed);
             }
             if (simplifyMode) {
-                result = Printer.printExpression(expression.evaluate(simplifier));
+                result = Printer.printExpression(expression.evaluate(new Simplifier(context)));
             } else {
-                result = Printer.printExpression(expression.evaluate(evaluator));
+                result = Printer.printExpression(expression.evaluate(new Evaluator(context)));
             }
         } catch (UndefinedVariableException | ParsingException e) {
             result = "ERROR: " + e.getMessage();
@@ -71,7 +69,7 @@ public class UserInputProcessor {
 
     public String undoEvaluation() {
         if (!evaluations.empty()) {
-            EvaluationAction e = evaluations.pop();
+            EvaluationUndo e = evaluations.pop();
             context = e.getContext();
             lastResult = e.getLastResult();
             return lastResult;
