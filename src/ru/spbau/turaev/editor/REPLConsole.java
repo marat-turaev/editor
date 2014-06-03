@@ -176,7 +176,9 @@ public class REPLConsole {
                     });
 
                     Colorizer c = new Colorizer(userInputProcessor.getContext(), userInputProcessor.isSimplifyMode());
-                    exp.accept(c);
+                    if (exp != null) {
+                        exp.accept(c);
+                    }
                     SwingUtilities.invokeLater(() -> {
                         document.removeUndoableEditListener(undoableEditListener);
                         document.setCharacterAttributes(begin, userInput.length(), document.getStyle("default"), true);
